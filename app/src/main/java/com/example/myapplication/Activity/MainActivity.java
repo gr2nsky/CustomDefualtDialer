@@ -1,5 +1,8 @@
-package com.example.myapplication;
-
+package com.example.myapplication.Activity;
+/**
+ * @author Yoon
+ * @created 2021-09-0777
+ */
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +17,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.myapplication.R;
 
 import java.util.ArrayList;
 
