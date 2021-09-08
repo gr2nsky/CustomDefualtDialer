@@ -1,7 +1,13 @@
 package com.example.myapplication;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,12 +34,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //통화권한 요청
+        requestCallPermission();
+
         et_dial = findViewById(R.id.et_dial);
         btn_move_phone_book = findViewById(R.id.btn_move_phone_book);
         btn_dial_call = findViewById(R.id.btn_dial_call);
         btn_dial_remove = findViewById(R.id.btn_dial_remove);
-        btn_dial_remove.setOnClickListener(removeBtnClickListener);
+
         dialBtnAdd();
+        btn_dial_call.setOnClickListener(callBtnClickListener);
+        btn_dial_remove.setOnClickListener(removeBtnClickListener);
 
         //editText선택시 키보드는 호출하지 않게끔 설정
         et_dial.setShowSoftInputOnFocus(false);
@@ -110,6 +121,50 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+    //통화버튼 클릭시 이멘트
+    View.OnClickListener callBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String callNum = et_dial.getText().toString();
+            Intent callIntent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + callNum));
+            startActivity(callIntent);
+        }
+    };
+
+    //취소키 입력시 Dialog를 출력하여 바로 이탈하지 않도록 제어
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(MainActivity.this)
+                .setTitle("경고")
+                .setMessage("앱을 종료하시겠습니까?")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //android의 TaskList에서도 삭제함. 단, API 21 이상, 이하는 finish로 대체
+                        finishAndRemoveTask();
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        AlertDialog backBtnDialog = backBtnDialogBuilder.create();
+        backBtnDialog.show();
+    }
+
+    //통화, 내부저장소 읽고쓰기 권한 요청
+    private void requestCallPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[] {
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            }
+            , 3);
+        }
+    }
 }
 
 
