@@ -18,19 +18,36 @@
             android:id="@+id/search_view_phone_book"
             android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:iconifiedByDefault="false"
+            android:queryBackground="@drawable/background_rounded_conner_light_gary"/>
         <ImageView
             android:id="@+id/iv_add_phone_book"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_marginLeft="10dp"
             android:src="@drawable/icon_person_add"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
     </LinearLayout>
-    <ListView
-        android:id="@+id/list_view_phone_book"
+    <FrameLayout
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp">
 
+        <ListView
+            android:id="@+id/list_view_phone_book"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/tv_replace_list_view_phone_book"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:visibility="gone"
+            android:text="저장된 연락처가 없습니다."
+            android:textSize="20dp"/>
+    </FrameLayout>
 </LinearLayout>
