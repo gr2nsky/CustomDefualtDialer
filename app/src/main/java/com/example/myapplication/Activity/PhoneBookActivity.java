@@ -1,10 +1,16 @@
-package com.example.myapplication;
-
+package com.example.myapplication.Activity;
+/**
+ * @author Yoon
+ * @created 2021-09-08
+ */
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class PhoneBook extends AppCompatActivity {
+import com.example.myapplication.R;
+
+
+public class PhoneBookActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

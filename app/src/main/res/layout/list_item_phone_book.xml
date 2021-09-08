@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/iv_person_phone_book_list_item"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/icon_person"/>
+    <TextView
+        android:id="@+id/tv_name_phone_book_list_item"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:gravity="center|left"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:text="이름"/>
+    <ImageView
+        android:id="@+id/iv_call_phone_book_list_item"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/icon_call"/>
+
+</LinearLayout>
