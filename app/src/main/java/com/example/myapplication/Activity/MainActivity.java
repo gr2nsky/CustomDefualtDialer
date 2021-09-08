@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     //Layout items
     EditText et_dial;
     ImageView btn_move_phone_book;
+
     ImageView btn_dial_call;
     ImageView btn_dial_remove;
     //ArrayList of dial numbers
@@ -48,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
         btn_dial_remove = findViewById(R.id.btn_dial_remove);
 
         dialBtnAdd();
+        btn_move_phone_book.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), PhoneBookActivity.class);
+                startActivity(intent);
+            }
+        });
         btn_dial_call.setOnClickListener(callBtnClickListener);
         btn_dial_remove.setOnClickListener(removeBtnClickListener);
 
