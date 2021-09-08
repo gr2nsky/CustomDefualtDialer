@@ -32,7 +32,15 @@ public class MainActivity extends AppCompatActivity {
         btn_move_phone_book = findViewById(R.id.btn_move_phone_book);
         btn_dial_call = findViewById(R.id.btn_dial_call);
         btn_dial_remove = findViewById(R.id.btn_dial_remove);
+        btn_dial_remove.setOnClickListener(removeBtnClickListener);
+        dialBtnAdd();
 
+        //editText선택시 키보드는 호출하지 않게끔 설정
+        et_dial.setShowSoftInputOnFocus(false);
+    } //onCreate
+
+    //Dial 추가가 너무 기므로 별도 분리하였음
+    private void dialBtnAdd(){
         dialBtns = new ArrayList<>();
         dialBtns.add(R.id.btn_dial_0);
         dialBtns.add(R.id.btn_dial_1);
@@ -51,11 +59,6 @@ public class MainActivity extends AppCompatActivity {
             TextView tv = findViewById(btnId);
             tv.setOnClickListener(numBtnClickListener);
         }
-        btn_dial_remove.setOnClickListener(removeBtnClickListener);
-
-        //editText의 커서위치는 유지하되 키보드는 호출하지 않게끔 설정
-        et_dial.setTextIsSelectable(true);
-        et_dial.setShowSoftInputOnFocus(false);
     }
 
     /*
@@ -84,12 +87,6 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener removeBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
-            String inputedNumStr = et_dial.getText().toString();
-            if (inputedNumStr.length() < 1) {
-                return;
-            }
-
             /*
                 선택영역의 시작과 끝을 구한다.
                 단, 선택영역이 없다면 getSelectionStart/end는 -1을 반환하므로, 예외처리
@@ -98,6 +95,9 @@ public class MainActivity extends AppCompatActivity {
             int endOfSelection = et_dial.getSelectionEnd() == -1? 0 : et_dial.getSelectionEnd();
             Log.d(TAG, "s :" + startOfSelection + " e: " + endOfSelection);
 
+            if (startOfSelection == 0 && endOfSelection == 0){
+                return;
+            }
 
             //역방향 선택시 getSelectionStart가 getSelectionEnd다 작으므로 max, min울 이용한다.
             if(startOfSelection == endOfSelection){
