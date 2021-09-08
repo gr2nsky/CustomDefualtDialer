@@ -4,12 +4,13 @@ package com.example.myapplication.Activity;
  * @created 2021-09-08
  */
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -35,9 +36,10 @@ public class PhoneBookActivity extends AppCompatActivity {
 
     SearchView search_view_phone_book;
     ImageView iv_add_phone_book;
-    ListView list_view_phone_book;
+    RecyclerView list_view_phone_book;
     TextView tv_replace_list_view_phone_book;
 
+    RecyclerView.LayoutManager layoutManager;
     PhoneBookListAdapter phoneBookListAdapter;
 
     ArrayList<PersonDTO> persons = new ArrayList<>();
@@ -51,7 +53,6 @@ public class PhoneBookActivity extends AppCompatActivity {
         iv_add_phone_book = findViewById(R.id.iv_add_phone_book);
         list_view_phone_book = findViewById(R.id.list_view_phone_book);
         tv_replace_list_view_phone_book = findViewById(R.id.tv_replace_list_view_phone_book);
-
         search_view_phone_book.setOnQueryTextListener(searchViewTextListener);
 
         //[수정요함] SQLite 구축 대신 임시 데이터 사용
@@ -63,6 +64,8 @@ public class PhoneBookActivity extends AppCompatActivity {
         if (persons.size() < 1) {
             tv_replace_list_view_phone_book.setVisibility(View.VISIBLE);
         } else {
+            layoutManager = new LinearLayoutManager(this);
+            list_view_phone_book.setLayoutManager(layoutManager);
             phoneBookListAdapter = new PhoneBookListAdapter(PhoneBookActivity.this, persons);
             list_view_phone_book.setAdapter(phoneBookListAdapter);
             tv_replace_list_view_phone_book.setVisibility(View.GONE);
