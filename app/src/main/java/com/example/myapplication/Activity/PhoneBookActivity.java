@@ -4,6 +4,7 @@ package com.example.myapplication.Activity;
  * @created 2021-09-08
  */
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,6 +16,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.myapplication.Adapter.PhoneBookListAdapter;
+import com.example.myapplication.Adapter.PhoneBookListItemTouchHelper;
 import com.example.myapplication.DTO.PersonDTO;
 import com.example.myapplication.R;
 
@@ -41,6 +43,7 @@ public class PhoneBookActivity extends AppCompatActivity {
 
     RecyclerView.LayoutManager layoutManager;
     PhoneBookListAdapter phoneBookListAdapter;
+    ItemTouchHelper itemTouchHelper;
 
     ArrayList<PersonDTO> persons = new ArrayList<>();
 
@@ -64,10 +67,15 @@ public class PhoneBookActivity extends AppCompatActivity {
         if (persons.size() < 1) {
             tv_replace_list_view_phone_book.setVisibility(View.VISIBLE);
         } else {
+            //리사이클러뷰에 리사이클러뷰 어댑터 부착
             layoutManager = new LinearLayoutManager(this);
             list_view_phone_book.setLayoutManager(layoutManager);
             phoneBookListAdapter = new PhoneBookListAdapter(PhoneBookActivity.this, persons);
             list_view_phone_book.setAdapter(phoneBookListAdapter);
+            //리사이클러뷰에 ItemTouch를 부착해 스와이프 동작 구현
+            itemTouchHelper = new ItemTouchHelper(new PhoneBookListItemTouchHelper(phoneBookListAdapter));
+            itemTouchHelper.attachToRecyclerView(list_view_phone_book);
+
             tv_replace_list_view_phone_book.setVisibility(View.GONE);
         }
     }
@@ -83,7 +91,6 @@ public class PhoneBookActivity extends AppCompatActivity {
     }
 
     //SearchView 텍스트 입력시 이벤트
-    //
     SearchView.OnQueryTextListener searchViewTextListener = new SearchView.OnQueryTextListener() {
         //검색버튼 입력시 호출, 검색버튼이 없으므로 사용하지 않음
         @Override

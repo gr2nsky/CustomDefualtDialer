@@ -1,7 +1,7 @@
 package com.example.myapplication.Activity;
 /**
  * @author Yoon
- * @created 2021-09-0777
+ * @created 2021-09-07
  */
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //통화권한 요청
+        //권한 요청
         requestCallPermission();
 
         et_dial = findViewById(R.id.et_dial);
@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         btn_dial_remove = findViewById(R.id.btn_dial_remove);
 
         dialBtnAdd();
+        btn_dial_call.setOnClickListener(callBtnClickListener);
+        btn_dial_remove.setOnClickListener(removeBtnClickListener);
         btn_move_phone_book.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -56,8 +58,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        btn_dial_call.setOnClickListener(callBtnClickListener);
-        btn_dial_remove.setOnClickListener(removeBtnClickListener);
 
         //editText선택시 키보드는 호출하지 않게끔 설정
         et_dial.setShowSoftInputOnFocus(false);
@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View view) {
             TextView tv = (TextView) view;
             String clickedVal = tv.getText().toString();
-
             /*
                 선택영역의 시작과 끝을 구한다.
                 단, 선택영역이 없다면 getSelectionStart/end는 -1을 반환하므로, 예외처리
@@ -123,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            //역방향 선택시 getSelectionStart가 getSelectionEnd다 작으므로 max, min울 이용한다.
+            //역방향 선택시 getSelectionStart가 getSelectionEnd보다 작고, 순방향은 반대이므로
+            //max, min울 이용해 범위를 설정한다.
             if(startOfSelection == endOfSelection){
                 et_dial.getText().replace(et_dial.getSelectionStart() - 1,
                         et_dial.getSelectionStart(), "");
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
         backBtnDialog.show();
     }
 
-    //통화, 내부저장소 읽고쓰기 권한 요청
+    //통화, 내부저장소 읽고쓰기 권한 요청. 23이상의 버전일경우만 필요함
     private void requestCallPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermissions(new String[] {
