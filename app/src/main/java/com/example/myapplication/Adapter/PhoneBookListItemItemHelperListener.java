@@ -7,5 +7,5 @@ import androidx.recyclerview.widget.RecyclerView;
  * @created 2021-09-09
  */
 public interface PhoneBookListItemItemHelperListener {
-    void onItemSwipe(int position, int listener, RecyclerView.ViewHolder viewHolder);
+    void onItemSwipe(int position, int direction, RecyclerView.ViewHolder viewHolder);
 }

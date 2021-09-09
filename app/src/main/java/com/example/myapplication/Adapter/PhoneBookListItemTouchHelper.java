@@ -28,7 +28,6 @@ public class PhoneBookListItemTouchHelper extends ItemTouchHelper.Callback{
     //드래그 및 스와이프 방향을 제어. 드래그는 사용하지 않고, 양방향 스와이프를 사용한다.
     @Override
     public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-        int swipeFlags = ItemTouchHelper.START | ItemTouchHelper.END;
         return makeMovementFlags(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
     }
 
@@ -44,7 +43,7 @@ public class PhoneBookListItemTouchHelper extends ItemTouchHelper.Callback{
         listener.onItemSwipe(viewHolder.getAdapterPosition(), direction, viewHolder);
     }
 
-    //??
+    //view 이동 제어
     @Override
     public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView,
                             @NonNull RecyclerView.ViewHolder viewHolder,
@@ -83,7 +82,8 @@ public class PhoneBookListItemTouchHelper extends ItemTouchHelper.Callback{
         }
     }
 
-    //ViewHoleder의 아이템 중, 스와이프된 item의 viewholder를 업캐스팅 하여 view 객체 반환
+    //ViewHoleder의 아이템 중, 스와이프할 viewHolderd의 view 객체 반환
+    //이를 사용함으로써 원하는 view만 이동하게 할 수 있다.
     private View getView(RecyclerView.ViewHolder viewHolder) {
         View swipeView = ((PhoneBookListAdapter.ViewHolder) viewHolder).swipe_item_phone_book_list;
         return swipeView;
