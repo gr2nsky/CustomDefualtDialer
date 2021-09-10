@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -64,6 +65,13 @@ public class PhoneBookActivity extends AppCompatActivity {
         tv_replace_list_view_phone_book = findViewById(R.id.tv_replace_list_view_phone_book);
         search_view_phone_book.setOnQueryTextListener(searchViewTextListener);
 
+        iv_add_phone_book.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PhoneBookActivity.this, PersonInputActivity.class);
+                startActivity(intent);
+            }
+        });
         selectAllPerson();
         setAdapter();
     }
