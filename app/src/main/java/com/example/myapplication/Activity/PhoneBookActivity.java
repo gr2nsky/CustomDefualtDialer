@@ -126,7 +126,7 @@ public class PhoneBookActivity extends AppCompatActivity {
     public void dbLoadError() {
         AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PhoneBookActivity.this)
                 .setTitle("경고")
-                .setMessage("저장된 연락처를 불러올 수 없습니다\n 앱을 다시 실행해 주세요.")
+                .setMessage("저장된 연락처를 불러올 수 없습니다.")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

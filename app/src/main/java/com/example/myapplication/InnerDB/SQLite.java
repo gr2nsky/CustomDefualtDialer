@@ -25,6 +25,7 @@ public class SQLite extends SQLiteOpenHelper {
                             "pNo INTEGER PRIMARY KEY AUTOINCREMENT, " +
                             "pName VARCHAR(20) NOT NULL, " +
                             "pPhoneNumber VARCHAR(50) NOT NULL, " +
+                            "pImagePath TEXT," +
                             "pEmail VARCHAR(100), " +
                             "pResidence VARCHAR(100), " +
                             "pMemo TEXT, " +
