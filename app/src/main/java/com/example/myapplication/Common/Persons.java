@@ -34,6 +34,10 @@ public class Persons {
         list.clear();
     }
 
+    public void setList(ArrayList<PersonDTO> list) {
+        this.list = list;
+    }
+
     public ArrayList<PersonDTO> getList(){
         return list;
     }

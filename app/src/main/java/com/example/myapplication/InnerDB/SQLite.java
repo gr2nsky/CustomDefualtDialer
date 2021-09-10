@@ -3,6 +3,7 @@ package com.example.myapplication.InnerDB;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * @author Yoon
@@ -10,22 +11,30 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class SQLite extends SQLiteOpenHelper {
 
+    String TAG = "SQLite";
+
     public SQLite(Context con){
         super(con, "Hphonebook.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query =
-                "CREATE TABLE person(" +
-                "pNo INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "pName VARCHAR(20) NOT NULL, " +
-                "pPhoneNumber VARCHAR(50) NOT NULL, " +
-                "pEmail VARCHAR(100), " +
-                "pResidence VARCHAR(100), " +
-                "pMemo TEXT" +
-                ")";
-        db.execSQL(query);
+        try{
+            String query =
+                    "CREATE TABLE IF NOT EXISTS person(" +
+                            "pNo INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                            "pName VARCHAR(20) NOT NULL, " +
+                            "pPhoneNumber VARCHAR(50) NOT NULL, " +
+                            "pEmail VARCHAR(100), " +
+                            "pResidence VARCHAR(100), " +
+                            "pMemo TEXT, " +
+                            "pIsChanged INTEGER DEFAULT 1" +
+                            ")";
+            db.execSQL(query);
+        }catch (Exception e){
+            Log.d(TAG, "######SQLite Error#####");
+            e.printStackTrace();
+        }
     }
 
     @Override

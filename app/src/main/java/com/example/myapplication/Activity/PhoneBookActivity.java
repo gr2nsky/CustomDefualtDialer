@@ -3,11 +3,13 @@ package com.example.myapplication.Activity;
  * @author Yoon
  * @created 2021-09-08
  */
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,7 +20,9 @@ import android.widget.TextView;
 import com.example.myapplication.Adapter.PhoneBookListAdapter;
 import com.example.myapplication.Adapter.PhoneBookListItemTouchHelper;
 import com.example.myapplication.DTO.PersonDTO;
+import com.example.myapplication.InnerDB.SQLite;
 import com.example.myapplication.R;
+import com.example.myapplication.Work.SelectAllPersons;
 
 import java.util.ArrayList;
 
@@ -41,6 +45,8 @@ public class PhoneBookActivity extends AppCompatActivity {
     RecyclerView list_view_phone_book;
     TextView tv_replace_list_view_phone_book;
 
+    SQLite sqLite;
+
     RecyclerView.LayoutManager layoutManager;
     PhoneBookListAdapter phoneBookListAdapter;
     ItemTouchHelper itemTouchHelper;
@@ -58,8 +64,7 @@ public class PhoneBookActivity extends AppCompatActivity {
         tv_replace_list_view_phone_book = findViewById(R.id.tv_replace_list_view_phone_book);
         search_view_phone_book.setOnQueryTextListener(searchViewTextListener);
 
-        //[수정요함] SQLite 구축 대신 임시 데이터 사용
-        tempPersonDataAdjust();
+        selectAllPerson();
         setAdapter();
     }
 
@@ -79,16 +84,21 @@ public class PhoneBookActivity extends AppCompatActivity {
             tv_replace_list_view_phone_book.setVisibility(View.GONE);
         }
     }
-    //[수정요함] 임시 데이터 적용 메서드. SQLite DB를 탐색해 data를 불러오는 기능으로 대체
-    private void tempPersonDataAdjust(){
-        PersonDTO p1 = new PersonDTO(1, "윤재필", "01047339270", "", "dbswovlf2009@naver.com", "안양", "");
-        PersonDTO p2 = new PersonDTO(2, "곽병민", "01044771118", "", "fireguy0420@naver.com", "안양", "");
-        PersonDTO p3 = new PersonDTO(3, "이영준", "01084268537", "", "ex_xe@naver.com", "안양", "");
 
-        persons.add(p1);
-        persons.add(p2);
-        persons.add(p3);
+    private void selectAllPerson(){
+        SelectAllPersons selectAllPersons = new SelectAllPersons(PhoneBookActivity.this);
+        try {
+            boolean result = selectAllPersons.execute().get();
+            if (!result){
+                dbLoadError();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            dbLoadError();
+        }
     }
+
+
 
     //SearchView 텍스트 입력시 이벤트
     SearchView.OnQueryTextListener searchViewTextListener = new SearchView.OnQueryTextListener() {
@@ -104,4 +114,19 @@ public class PhoneBookActivity extends AppCompatActivity {
             return false;
         }
     };
+
+    public void dbLoadError() {
+        AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PhoneBookActivity.this)
+                .setTitle("경고")
+                .setMessage("저장된 연락처를 불러올 수 없습니다\n 앱을 다시 실행해 주세요.")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //android의 TaskList에서도 삭제함. 단, API 21 이상, 이하는 finish로 대체
+                        finishAndRemoveTask();
+                    }
+                });
+        AlertDialog backBtnDialog = backBtnDialogBuilder.create();
+        backBtnDialog.show();
+    }
 }

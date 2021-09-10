@@ -1,12 +1,16 @@
 package com.example.myapplication.InnerDB;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+import android.util.Log;
 
 import com.example.myapplication.Common.Persons;
 import com.example.myapplication.DTO.PersonDTO;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +19,7 @@ import java.util.ArrayList;
  */
 public class Querys {
 
-    String TAG = "QueryForMain";
+    String TAG = "Querys";
     SQLite sqLite;
     Context con;
     SQLiteDatabase db;
@@ -25,12 +29,12 @@ public class Querys {
         sqLite = new SQLite(con);
     }
 
-    public boolean selectAll(){
-        //메모리에 유지중인 연락처 리스트 초기화
-        Persons persons = Persons.getPersons();
-        persons.clear();
+    public ArrayList<PersonDTO> selectAll(){
+        ArrayList<PersonDTO> persons = new ArrayList<>();
+
         try{
             db = sqLite.getReadableDatabase();
+            sqLite.onCreate(db);
             String query = "SELECT * FROM person ";
 
             Cursor coursor = db.rawQuery(query, null);
@@ -42,14 +46,40 @@ public class Querys {
                 String email = coursor.getString(4);
                 String residence = coursor.getString(5);
                 String memo = coursor.getString(6);
+                int isChanged = coursor.getInt(7);
 
                 PersonDTO person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo);
-                persons.append(person);
+                persons.add(person);
             }
             coursor.close();
             sqLite.close();
-            return true;
+            Log.d(TAG, "selectAll done");
+
+            return persons;
         }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean insertPerson(PersonDTO person){
+        try{
+            db = sqLite.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("pNo", person.getNo());
+            values.put("pName", person.getName());
+            values.put("pPhoneNumber", person.getPhoneNumber());
+            values.put("pEmail", person.getEmail());
+            values.put("pResidence", person.getResidence());
+            values.put("pMemo", person.getMemo());
+            values.put("pIsChanged", person.getIsChanged());
+
+            db.insert("person", null, values);
+
+            Log.d(TAG, "insertPerson done");
+            return true;
+        }catch (Exception e){
             e.printStackTrace();
         }
         return false;
