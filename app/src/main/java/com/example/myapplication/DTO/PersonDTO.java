@@ -22,7 +22,8 @@ public class PersonDTO {
     }
 
     //출력용
-    public PersonDTO(int no, String name, String phoneNumber, String imagePath, String email, String residence, String memo) {
+    public PersonDTO(int no, String name, String phoneNumber, String imagePath,
+                     String email, String residence, String memo, int isChanged) {
         this.no = no;
         this.name = name;
         this.imagePath = imagePath;
@@ -30,6 +31,7 @@ public class PersonDTO {
         this.email = email;
         this.residence = residence;
         this.memo = memo;
+        this.isChanged = isChanged;
     }
 
     public int getNo() {
