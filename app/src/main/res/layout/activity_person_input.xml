@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F4F4F4"
-    tools:context=".Activity.PersonDetailActivity">
+    tools:context=".Activity.PersonInputActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,12 +23,12 @@
             android:paddingBottom="10dp"
             android:layout_marginBottom="10dp">
             <ImageView
-                android:id="@+id/iv_person_detail"
+                android:id="@+id/iv_person_input"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/icon_person"/>
             <EditText
-                android:id="@+id/et_name_person_detail"
+                android:id="@+id/et_name_person_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -59,7 +59,7 @@
                 android:textSize="12dp"
                 android:textColor="#939393"/>
             <EditText
-                android:id="@+id/et_phone_person_detail"
+                android:id="@+id/et_phone_person_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
@@ -85,7 +85,7 @@
                 android:textSize="12dp"
                 android:textColor="#939393"/>
             <EditText
-                android:id="@+id/et_email_person_detail"
+                android:id="@+id/et_email_person_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
@@ -111,7 +111,7 @@
                 android:textSize="12dp"
                 android:textColor="#939393"/>
             <EditText
-                android:id="@+id/et_residence_person_detail"
+                android:id="@+id/et_residence_person_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
@@ -138,7 +138,7 @@
                 android:textSize="12dp"
                 android:textColor="#939393"/>
             <EditText
-                android:id="@+id/et_memo_person_detail"
+                android:id="@+id/et_memo_person_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#ffffff"
@@ -164,7 +164,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"/>
             <LinearLayout
-                android:id="@+id/ll_negative_person_detail"
+                android:id="@+id/ll_negative_person_input"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -194,7 +194,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"/>
             <LinearLayout
-                android:id="@+id/ll_positive_person_detail"
+                android:id="@+id/ll_positive_person_input"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
