@@ -48,7 +48,7 @@ public class Querys {
                 String memo = coursor.getString(6);
                 int isChanged = coursor.getInt(7);
 
-                PersonDTO person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo);
+                PersonDTO person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo, isChanged);
                 persons.add(person);
             }
             coursor.close();
@@ -70,6 +70,7 @@ public class Querys {
             values.put("pNo", person.getNo());
             values.put("pName", person.getName());
             values.put("pPhoneNumber", person.getPhoneNumber());
+            values.put("pImagePath", person.getImagePath());
             values.put("pEmail", person.getEmail());
             values.put("pResidence", person.getResidence());
             values.put("pMemo", person.getMemo());
