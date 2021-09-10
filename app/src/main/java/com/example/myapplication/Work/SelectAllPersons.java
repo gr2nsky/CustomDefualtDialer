@@ -40,9 +40,13 @@ public class SelectAllPersons extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-        ArrayList<PersonDTO> pList = querys.selectAll();
+        ArrayList<PersonDTO> pList = null;
+
+        pList = querys.selectAll();
         if (pList == null) {
             return false;
+        } else if (pList.isEmpty()){
+            return true;
         }
         //초기화 후에 일괄 적용
         Persons persons = Persons.getPersons();

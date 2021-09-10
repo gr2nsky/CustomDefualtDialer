@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.Activity.PersonDetailActivity;
 import com.example.myapplication.DTO.PersonDTO;
 import com.example.myapplication.R;
 
@@ -43,6 +44,16 @@ public class PhoneBookListAdapter extends RecyclerView.Adapter<PhoneBookListAdap
             tv_name_phone_book_list_item = itemView.findViewById(R.id.tv_name_phone_book_list_item);
             iv_call_phone_book_list_item = itemView.findViewById(R.id.iv_call_phone_book_list_item);
             iv_message_phone_book_list_item = itemView.findViewById(R.id.iv_message_phone_book_list_item);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    PersonDTO person = persons.get(position);
+                    Intent intent = new Intent(con, PersonDetailActivity.class);
+                    con.startActivity(intent);
+                }
+            });
         }
     }
 
@@ -69,6 +80,7 @@ public class PhoneBookListAdapter extends RecyclerView.Adapter<PhoneBookListAdap
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PersonDTO person = persons.get(position);
         //[수정요함] 이미지 작업의 경우 glide를 사용해 server의 image를 불러올 것
+        //holder.iv_person_phone_book_list_item
         holder.tv_name_phone_book_list_item.setText(person.getName());
 
     }

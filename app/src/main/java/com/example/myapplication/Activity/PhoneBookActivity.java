@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -64,6 +65,13 @@ public class PhoneBookActivity extends AppCompatActivity {
         tv_replace_list_view_phone_book = findViewById(R.id.tv_replace_list_view_phone_book);
         search_view_phone_book.setOnQueryTextListener(searchViewTextListener);
 
+        iv_add_phone_book.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PhoneBookActivity.this, PersonInputActivity.class);
+                startActivity(intent);
+            }
+        });
         selectAllPerson();
         setAdapter();
     }
@@ -118,7 +126,7 @@ public class PhoneBookActivity extends AppCompatActivity {
     public void dbLoadError() {
         AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PhoneBookActivity.this)
                 .setTitle("경고")
-                .setMessage("저장된 연락처를 불러올 수 없습니다\n 앱을 다시 실행해 주세요.")
+                .setMessage("저장된 연락처를 불러올 수 없습니다.")
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
