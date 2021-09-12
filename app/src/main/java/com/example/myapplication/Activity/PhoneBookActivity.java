@@ -20,12 +20,10 @@ import android.widget.TextView;
 
 import com.example.myapplication.Adapter.PhoneBookListAdapter;
 import com.example.myapplication.Adapter.PhoneBookListItemTouchHelper;
-import com.example.myapplication.DTO.PersonDTO;
+import com.example.myapplication.Common.Persons;
 import com.example.myapplication.InnerDB.SQLite;
 import com.example.myapplication.R;
 import com.example.myapplication.Work.SelectAllPersons;
-
-import java.util.ArrayList;
 
 /*
     전개 순서
@@ -37,7 +35,7 @@ import java.util.ArrayList;
     4. phoneBookListAdapter를 list_view_phone_book에 부착한다.
  */
 
-public class PhoneBookActivity extends AppCompatActivity {
+public class PhoneBookActivity extends AppCompatActivity{
 
     String TAG = "PhoneBookActivity";
 
@@ -51,8 +49,6 @@ public class PhoneBookActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     PhoneBookListAdapter phoneBookListAdapter;
     ItemTouchHelper itemTouchHelper;
-
-    ArrayList<PersonDTO> persons = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +69,16 @@ public class PhoneBookActivity extends AppCompatActivity {
             }
         });
         selectAllPerson();
-        setAdapter();
     }
 
     private void setAdapter(){
-        if (persons.size() < 1) {
+        if (Persons.getPersons().getList().size() < 1) {
             tv_replace_list_view_phone_book.setVisibility(View.VISIBLE);
         } else {
             //리사이클러뷰에 리사이클러뷰 어댑터 부착
             layoutManager = new LinearLayoutManager(this);
             list_view_phone_book.setLayoutManager(layoutManager);
-            phoneBookListAdapter = new PhoneBookListAdapter(PhoneBookActivity.this, persons);
+            phoneBookListAdapter = new PhoneBookListAdapter(PhoneBookActivity.this, Persons.getPersons().getList());
             list_view_phone_book.setAdapter(phoneBookListAdapter);
             //리사이클러뷰에 ItemTouch를 부착해 스와이프 동작 구현
             itemTouchHelper = new ItemTouchHelper(new PhoneBookListItemTouchHelper(phoneBookListAdapter));
@@ -136,5 +131,17 @@ public class PhoneBookActivity extends AppCompatActivity {
                 });
         AlertDialog backBtnDialog = backBtnDialogBuilder.create();
         backBtnDialog.show();
+    }
+
+    //추가, 입력, 삭제는 다른 화면에서 하고 돌아오므로 onResume에 갱신
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (phoneBookListAdapter == null){
+            setAdapter();
+        }
+        if (phoneBookListAdapter != null){
+            phoneBookListAdapter.notifyDataSetChanged();
+        }
     }
 }

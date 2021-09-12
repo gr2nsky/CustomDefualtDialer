@@ -49,8 +49,8 @@ public class PhoneBookListAdapter extends RecyclerView.Adapter<PhoneBookListAdap
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-                    PersonDTO person = persons.get(position);
                     Intent intent = new Intent(con, PersonDetailActivity.class);
+                    intent.putExtra("personPosition", position);
                     con.startActivity(intent);
                 }
             });

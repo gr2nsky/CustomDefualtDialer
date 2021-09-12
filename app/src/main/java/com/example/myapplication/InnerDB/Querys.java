@@ -50,6 +50,8 @@ public class Querys {
 
                 PersonDTO person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo, isChanged);
                 persons.add(person);
+
+                Log.d(TAG, "selectAll wrok : " + no + ", " + name + ", " + phoneNumber + ", " + imagePath);
             }
             coursor.close();
             sqLite.close();
@@ -67,7 +69,6 @@ public class Querys {
             db = sqLite.getWritableDatabase();
 
             ContentValues values = new ContentValues();
-            values.put("pNo", person.getNo());
             values.put("pName", person.getName());
             values.put("pPhoneNumber", person.getPhoneNumber());
             values.put("pImagePath", person.getImagePath());
