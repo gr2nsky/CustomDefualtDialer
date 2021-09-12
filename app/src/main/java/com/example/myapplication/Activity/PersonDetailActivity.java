@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import com.example.myapplication.Common.Persons;
 import com.example.myapplication.DTO.PersonDTO;
 import com.example.myapplication.R;
+import com.example.myapplication.Work.DeletePerson;
+import com.example.myapplication.Work.InsertPerson;
 
 import java.util.ArrayList;
 
@@ -76,7 +78,11 @@ public class PersonDetailActivity extends AppCompatActivity {
         ll_negative_person_detail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deletePerson();
+                if(editingToken == 0){
+                    deletePerson();
+                } else {
+                    editingCancel();
+                }
             }
         });
     } //onCreate
@@ -99,6 +105,23 @@ public class PersonDetailActivity extends AppCompatActivity {
     }
 
     private void deletePerson(){
+        DeletePerson deletePerson = new DeletePerson(PersonDetailActivity.this, person);
+        try{
+            boolean result = deletePerson.execute().get();
+            if (result){
+                Persons persons = Persons.getPersons();
+                persons.append(person);
+
+                finishAndRemoveTask();
+            } else {
+                dbErrorDialog("연락처를 불러오는데 실패하였습니다.");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void editingCancel(){
 
     }
 
@@ -117,10 +140,10 @@ public class PersonDetailActivity extends AppCompatActivity {
         }
     }
 
-    public void dbLoadError() {
+    public void dbErrorDialog(String message) {
         AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PersonDetailActivity.this)
                 .setTitle("경고")
-                .setMessage("연락처를 불러오는데 실패하였습니다.")
+                .setMessage(message)
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

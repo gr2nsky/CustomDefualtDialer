@@ -86,4 +86,20 @@ public class Querys {
         }
         return false;
     }
+
+    public boolean deletePerson(PersonDTO person){
+        try{
+            String selection = "pNo = ?";
+            String[] selectionArgs =  { Integer.toString(person.getNo()) };
+            int deleteRows = db.delete("person", selection, selectionArgs);
+
+            if(deleteRows < 1){
+                return false;
+            }
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
