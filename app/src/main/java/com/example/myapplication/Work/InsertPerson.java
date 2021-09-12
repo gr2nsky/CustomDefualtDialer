@@ -1,10 +1,8 @@
 package com.example.myapplication.Work;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.myapplication.Common.Persons;
 import com.example.myapplication.DTO.PersonDTO;
@@ -14,22 +12,23 @@ import java.util.ArrayList;
 
 /**
  * @author Yoon
- * @created 2021-09-09
- * asynctask는 deprecated되었지만, 대체제인 코루틴, RxJAVA를 아직 모르므로...
+ * @created 2021-09-10n
  */
-public class SelectAllPersons extends AsyncTask<Void, Void, Boolean> {
+public class InsertPerson extends AsyncTask<Void, Void, Boolean> {
 
-    String TAG = "SelectAllPersons";
+    String TAG = "InsertPerson";
 
     Context con;
     ProgressDialog dialog;
     Persons persons;
     Querys querys;
+    PersonDTO person;
 
-    public SelectAllPersons(Context con) {
+    public InsertPerson(Context con, PersonDTO person) {
         this.con = con;
         persons = Persons.getPersons();
         querys = new Querys(con);
+        this.person = person;
     }
 
     @Override
@@ -37,29 +36,23 @@ public class SelectAllPersons extends AsyncTask<Void, Void, Boolean> {
         super.onPreExecute();
         dialog = new ProgressDialog(con);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("연락처를 불러오고 있습니다...");
+        dialog.setMessage("연락처를 추가하고 있습니다...");
         dialog.show();
     }
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-        ArrayList<PersonDTO> pList = null;
 
-        pList = querys.selectAll();
-        Log.d(TAG, "pList size = " + pList.size());
-        if (pList == null) {
-            return false;
-        } else if (pList.isEmpty()){
-            return true;
+        try{
+            boolean result = querys.insertPerson(person);
+            if(result){
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        //초기화 후에 일괄 적용
-        Persons persons = Persons.getPersons();
-        persons.clear();
-        persons.setList(pList);
-        Log.d(TAG, "persons size = " + persons.getList().size());
 
-        dialog.dismiss();
-        return true;
+        return false;
     }
 
     @Override
@@ -67,4 +60,5 @@ public class SelectAllPersons extends AsyncTask<Void, Void, Boolean> {
         dialog.dismiss();
         super.onPostExecute(aBoolean);
     }
+
 }

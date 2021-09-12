@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Persons {
 
     public static Persons persons = null;
-    ArrayList<PersonDTO> list = new ArrayList<>();
+    private ArrayList<PersonDTO> list = new ArrayList<>();
 
     private Persons(){}
 
