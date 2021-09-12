@@ -77,7 +77,10 @@ public class Querys {
             values.put("pMemo", person.getMemo());
             values.put("pIsChanged", person.getIsChanged());
 
-            db.insert("person", null, values);
+            long newRowId = db.insert("person", null, values);
+            if (newRowId == -1){
+                return false;
+            }
 
             Log.d(TAG, "insertPerson done");
             return true;
@@ -89,13 +92,50 @@ public class Querys {
 
     public boolean deletePerson(PersonDTO person){
         try{
+            db = sqLite.getWritableDatabase();
+
             String selection = "pNo = ?";
             String[] selectionArgs =  { Integer.toString(person.getNo()) };
-            int deleteRows = db.delete("person", selection, selectionArgs);
 
+            int deleteRows = db.delete("person", selection, selectionArgs);
             if(deleteRows < 1){
                 return false;
             }
+            Log.d(TAG, "deletePerson done");
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean modifyPerson(PersonDTO person){
+        try {
+            db = sqLite.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("pName", person.getName());
+            values.put("pPhoneNumber", person.getPhoneNumber());
+            values.put("pImagePath", person.getImagePath());
+            values.put("pEmail", person.getEmail());
+            values.put("pResidence", person.getResidence());
+            values.put("pMemo", person.getMemo());
+            values.put("pIsChanged", "1");
+
+            String selection = "pNo = ?";
+            String[] selectionArgs =  { Integer.toString(person.getNo()) };
+
+            int count = db.update(
+                    "person",
+                    values,
+                    selection,
+                    selectionArgs
+            );
+            if (count < 1){
+                return false;
+            }
+
+            Log.d(TAG, "modifyPerson done");
             return true;
         }catch (Exception e){
             e.printStackTrace();

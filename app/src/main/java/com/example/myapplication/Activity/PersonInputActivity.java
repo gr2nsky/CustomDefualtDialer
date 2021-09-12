@@ -69,7 +69,8 @@ public class PersonInputActivity extends AppCompatActivity {
         String memo = et_memo_person_input.getText().toString();
 
         PersonDTO person = new PersonDTO(name, phone);
-        if (!imagePath.equals("")){
+        //[수정요함]
+        if (imagePath != null){
             person.setImagePath(imagePath);
         }
         if (!email.equals("")){
