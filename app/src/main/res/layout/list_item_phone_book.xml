@@ -37,17 +37,32 @@
             android:layout_height="60dp"
             android:layout_gravity="center"
             android:src="@drawable/icon_person"/>
-        <TextView
-            android:id="@+id/tv_name_phone_book_list_item"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|left"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="이름"
-            android:textColor="@color/black"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
+            <TextView
+                android:layout_weight="1"
+                android:id="@+id/tv_name_phone_book_list_item"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:gravity="center|left"
+                android:paddingTop="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="이름"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_phone_number_phone_book_list_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|left"
+                android:paddingBottom="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="전화번호"/>
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

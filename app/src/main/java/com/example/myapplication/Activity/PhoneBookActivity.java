@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -59,6 +60,7 @@ public class PhoneBookActivity extends AppCompatActivity{
         iv_add_phone_book = findViewById(R.id.iv_add_phone_book);
         list_view_phone_book = findViewById(R.id.list_view_phone_book);
         tv_replace_list_view_phone_book = findViewById(R.id.tv_replace_list_view_phone_book);
+        search_view_phone_book.setImeOptions(EditorInfo.IME_ACTION_DONE);
         search_view_phone_book.setOnQueryTextListener(searchViewTextListener);
 
         iv_add_phone_book.setOnClickListener(new View.OnClickListener() {
@@ -74,18 +76,19 @@ public class PhoneBookActivity extends AppCompatActivity{
     private void setAdapter(){
         if (Persons.getPersons().getList().size() < 1) {
             tv_replace_list_view_phone_book.setVisibility(View.VISIBLE);
-        } else {
-            //리사이클러뷰에 리사이클러뷰 어댑터 부착
-            layoutManager = new LinearLayoutManager(this);
-            list_view_phone_book.setLayoutManager(layoutManager);
-            phoneBookListAdapter = new PhoneBookListAdapter(PhoneBookActivity.this, Persons.getPersons().getList());
-            list_view_phone_book.setAdapter(phoneBookListAdapter);
-            //리사이클러뷰에 ItemTouch를 부착해 스와이프 동작 구현
-            itemTouchHelper = new ItemTouchHelper(new PhoneBookListItemTouchHelper(phoneBookListAdapter));
-            itemTouchHelper.attachToRecyclerView(list_view_phone_book);
-
-            tv_replace_list_view_phone_book.setVisibility(View.GONE);
+            return;
         }
+
+        //리사이클러뷰에 리사이클러뷰 어댑터 부착
+        layoutManager = new LinearLayoutManager(this);
+        list_view_phone_book.setLayoutManager(layoutManager);
+        phoneBookListAdapter = new PhoneBookListAdapter(PhoneBookActivity.this, Persons.getPersons().getList());
+        list_view_phone_book.setAdapter(phoneBookListAdapter);
+        //리사이클러뷰에 ItemTouch를 부착해 스와이프 동작 구현
+        itemTouchHelper = new ItemTouchHelper(new PhoneBookListItemTouchHelper(phoneBookListAdapter));
+        itemTouchHelper.attachToRecyclerView(list_view_phone_book);
+        tv_replace_list_view_phone_book.setVisibility(View.GONE);
+
     }
 
     private void selectAllPerson(){
@@ -100,23 +103,6 @@ public class PhoneBookActivity extends AppCompatActivity{
             dbLoadError();
         }
     }
-
-
-
-    //SearchView 텍스트 입력시 이벤트
-    SearchView.OnQueryTextListener searchViewTextListener = new SearchView.OnQueryTextListener() {
-        //검색버튼 입력시 호출, 검색버튼이 없으므로 사용하지 않음
-        @Override
-        public boolean onQueryTextSubmit(String s) {
-            return false;
-        }
-        //텍스트 입력/수정시에 호출
-        @Override
-        public boolean onQueryTextChange(String s) {
-            Log.d(TAG, "SearchVies Text is changed : " + s);
-            return false;
-        }
-    };
 
     public void dbLoadError() {
         AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PhoneBookActivity.this)
@@ -141,7 +127,25 @@ public class PhoneBookActivity extends AppCompatActivity{
             setAdapter();
         }
         if (phoneBookListAdapter != null){
+            phoneBookListAdapter.renewalSearchedListBase(Persons.getPersons().getList());
             phoneBookListAdapter.notifyDataSetChanged();
+            phoneBookListAdapter.getFilter().filter(search_view_phone_book.getQuery());
         }
     }
+
+    //SearchView 텍스트 입력시 이벤트
+    SearchView.OnQueryTextListener searchViewTextListener = new SearchView.OnQueryTextListener() {
+        //검색버튼 입력시 호출, 검색버튼이 없으므로 사용하지 않음
+        @Override
+        public boolean onQueryTextSubmit(String s) {
+            return false;
+        }
+        //텍스트 입력/수정시에 호출
+        @Override
+        public boolean onQueryTextChange(String s) {
+            phoneBookListAdapter.getFilter().filter(s);
+            Log.d(TAG, "SearchVies Text is changed : " + s);
+            return false;
+        }
+    };
 }
