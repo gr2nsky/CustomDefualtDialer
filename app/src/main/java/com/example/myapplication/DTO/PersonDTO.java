@@ -21,6 +21,16 @@ public class PersonDTO {
         this.phoneNumber = phoneNumber;
     }
 
+    //수정용
+
+
+    public PersonDTO(int no, String name, String phoneNumber) {
+        this.no = no;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.isChanged = 1;
+    }
+
     //출력용
     public PersonDTO(int no, String name, String phoneNumber, String imagePath,
                      String email, String residence, String memo, int isChanged) {
@@ -96,5 +106,16 @@ public class PersonDTO {
 
     public void setIsChanged(int isChanged) {
         this.isChanged = isChanged;
+    }
+
+    public String pringAll(){
+        return "\nint no : " + no + "\n" +
+                "String name : " + name + "\n" +
+                "String phoneNumber : " + phoneNumber + "\n" +
+                "String imagePath : " + imagePath + "\n" +
+                "String email : " + email + "\n" +
+                "String residence : " + residence + "\n" +
+                "String memo : " + memo + "\n" +
+                "int isChanged : " + isChanged;
     }
 }

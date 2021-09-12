@@ -1,5 +1,7 @@
 package com.example.myapplication.Common;
 
+import androidx.annotation.NonNull;
+
 import com.example.myapplication.DTO.PersonDTO;
 
 import java.util.ArrayList;
@@ -28,6 +30,14 @@ public class Persons {
 
     public void append(PersonDTO person){
         list.add(person);
+    }
+
+    public void remove(PersonDTO person){
+        list.remove(person);
+    }
+
+    public void modify(PersonDTO oldPerson, PersonDTO person){
+        list.set(list.indexOf(oldPerson), person);
     }
 
     public void clear(){
