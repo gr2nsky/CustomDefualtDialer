@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.myapplication"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0">
 
     <uses-sdk
         android:minSdkVersion="24"
@@ -14,6 +14,13 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS"/>
+    <uses-permission android:name="android.permission.READ_CALL_LOG"/>
+    <uses-permission android:name="android.permissions.READ_PHONE_NUMBERS"/>
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
+
     <application
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
@@ -23,19 +30,37 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:testOnly="true"
-        android:theme="@style/Theme.MyApplication" >
+        android:theme="@style/Theme.MyApplication">
+        <service
+            android:name=".CallBackend.CallService"
+            android:enabled="true"
+            android:exported="true"></service>
+
         <activity
-            android:name="com.example.myapplication.Activity.PersonInputActivity"
+            android:name=".Activity.CallActivity"
+            android:exported="true" />
+
+        <receiver
+            android:name=".CallBackend.CallReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".Activity.PersonInputActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.myapplication.Activity.PersonDetailActivity"
+            android:name=".Activity.PersonDetailActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.myapplication.Activity.PhoneBookActivity"
+            android:name=".Activity.PhoneBookActivity"
             android:exported="true" />
         <activity
-            android:name="com.example.myapplication.Activity.MainActivity"
-            android:exported="true" >
+            android:name=".Activity.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
