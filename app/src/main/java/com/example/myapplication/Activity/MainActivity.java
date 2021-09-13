@@ -178,8 +178,12 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(new String[] {
                     Manifest.permission.CALL_PHONE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.ANSWER_PHONE_CALLS,
+                    Manifest.permission.READ_CALL_LOG,
+
             }
-            , 3);
+            , 5);
         }
     }
 }
