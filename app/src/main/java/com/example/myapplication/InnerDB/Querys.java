@@ -64,6 +64,41 @@ public class Querys {
         return null;
     }
 
+    public PersonDTO selectByPhoneNo(String phoneNo){
+        PersonDTO person = null;
+        String[] selectionArgs = { phoneNo };
+
+        try{
+            db = sqLite.getReadableDatabase();
+            sqLite.onCreate(db);
+            String query = "SELECT * FROM person WHERE pPhoneNumber = ?";
+
+            Cursor coursor = db.rawQuery(query, selectionArgs);
+            if (coursor.moveToNext()){
+                int no = coursor.getInt(0);
+                String name = coursor.getString(1);
+                String phoneNumber = coursor.getString(2);
+                String imagePath = coursor.getString(3);
+                String email = coursor.getString(4);
+                String residence = coursor.getString(5);
+                String memo = coursor.getString(6);
+                int isChanged = coursor.getInt(7);
+
+                person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo, isChanged);
+
+                Log.d(TAG, "selectAll wrok : " + no + ", " + name + ", " + phoneNumber + ", " + imagePath);
+            }
+            coursor.close();
+            sqLite.close();
+            Log.d(TAG, "selectAll done");
+
+            return person;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public boolean insertPerson(PersonDTO person){
         try{
             db = sqLite.getWritableDatabase();

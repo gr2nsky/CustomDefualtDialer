@@ -41,13 +41,17 @@ public class CallReceiver extends BroadcastReceiver implements CallListener {
                 } else {
                     phoneState = state;
                 }
+
+                //통화 대기중
                 if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                     String phoneNo = extras.getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
-                    Log.d(TAG, phoneNo + " - current Number");
-                    sendToActivity(context, phoneNo);
+                    sendToActivity(context, phoneNo, 0);
+                    //통화 중
                 } else if (state.equals(TelephonyManager.EXTRA_STATE_OFFHOOK)) {
                     Log.d(TAG, "통화중");
+                    //종료
                 } else if (state.equals(TelephonyManager.EXTRA_STATE_IDLE)) {
+                    sendToActivity(context, "", 1);
                     Log.d(TAG, "통화 종료 혹은 통화벨 종료");
                 }
 
@@ -58,7 +62,7 @@ public class CallReceiver extends BroadcastReceiver implements CallListener {
         }
     }
 
-    private void sendToActivity(Context con, String str) {
+    private void sendToActivity(Context con, String phone, int stateToken) {
         callActivity = new CallActivity();
         Intent intent = new Intent(con, CallActivity.class);
         /*
@@ -66,8 +70,9 @@ public class CallReceiver extends BroadcastReceiver implements CallListener {
         Intent.FLAG_ACTIVITY_SINGLE_TOP : 호출된 액티비티가 최상위에 존재한다면, 재사용
         Intent.FLAG_ACTIVITY_CLEAR_TOP : 호출된 액티비티가 스택에 존재한다면, 위의 액티비티를 모두 삭제해 최상위로 만든다.
          */
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("phone", str);
+        intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("phone", phone);
+        intent.putExtra("stateToken", stateToken);
         con.startActivity(intent);
     }
 
@@ -87,5 +92,10 @@ public class CallReceiver extends BroadcastReceiver implements CallListener {
             return;
         }
         telecomManager.endCall();
+    }
+
+    @Override
+    public void shareContext(CallActivity callActivity) {
+        this.callActivity = callActivity;
     }
 }
