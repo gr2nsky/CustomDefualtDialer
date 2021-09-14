@@ -177,4 +177,30 @@ public class Querys {
         }
         return false;
     }
+
+    public boolean isChangedRemove(String[] pNos){
+        try {
+
+            db = sqLite.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("pIsChanged", "0");
+
+            String selection = "pNo = ?";
+            String[] selectionArgs = pNos;
+
+            int count = db.update(
+                    "person",
+                    values,
+                    selection,
+                    selectionArgs
+            );
+
+            Log.d(TAG, "modifyPerson done");
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
