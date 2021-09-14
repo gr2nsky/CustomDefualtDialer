@@ -24,6 +24,7 @@ import com.example.myapplication.Adapter.PhoneBookListItemTouchHelper;
 import com.example.myapplication.Common.Persons;
 import com.example.myapplication.InnerDB.SQLite;
 import com.example.myapplication.R;
+import com.example.myapplication.Work.DBParseJSON;
 import com.example.myapplication.Work.SelectAllPersons;
 
 /*
@@ -42,10 +43,9 @@ public class PhoneBookActivity extends AppCompatActivity{
 
     SearchView search_view_phone_book;
     ImageView iv_add_phone_book;
+    ImageView iv_backendTask_phone_boook;
     RecyclerView list_view_phone_book;
     TextView tv_replace_list_view_phone_book;
-
-    SQLite sqLite;
 
     RecyclerView.LayoutManager layoutManager;
     PhoneBookListAdapter phoneBookListAdapter;
@@ -56,6 +56,7 @@ public class PhoneBookActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_phone_book);
 
+        iv_backendTask_phone_boook = findViewById(R.id.iv_backendTask_phone_boook);
         search_view_phone_book = findViewById(R.id.search_view_phone_book);
         iv_add_phone_book = findViewById(R.id.iv_add_phone_book);
         list_view_phone_book = findViewById(R.id.list_view_phone_book);
@@ -68,6 +69,12 @@ public class PhoneBookActivity extends AppCompatActivity{
             public void onClick(View view) {
                 Intent intent = new Intent(PhoneBookActivity.this, PersonInputActivity.class);
                 startActivity(intent);
+            }
+        });
+        iv_backendTask_phone_boook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uploadAndDownload();
             }
         });
         selectAllPerson();
@@ -148,4 +155,26 @@ public class PhoneBookActivity extends AppCompatActivity{
             return false;
         }
     };
+
+    private void uploadAndDownload(){
+        DBParseJSON dbParseJSON = new DBParseJSON(PhoneBookActivity.this);
+
+        AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PhoneBookActivity.this)
+                .setTitle("알림")
+                .setMessage("원하시는 작업을 선택하세요.")
+                .setPositiveButton("백업", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dbParseJSON.uploadProcess();
+                    }
+                })
+                .setNegativeButton("내려받기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+        AlertDialog backBtnDialog = backBtnDialogBuilder.create();
+        backBtnDialog.show();
+    }
 }
