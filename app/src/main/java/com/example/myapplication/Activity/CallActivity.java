@@ -11,7 +11,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.CallBackend.CallListener;
+import com.example.myapplication.Common.Persons;
 import com.example.myapplication.Common.ShareInterface;
+import com.example.myapplication.DTO.PersonDTO;
+import com.example.myapplication.InnerDB.Querys;
 import com.example.myapplication.R;
 
 import java.util.Timer;
@@ -33,7 +36,7 @@ public class CallActivity extends AppCompatActivity {
 
     Timer callTimer;
     TimerTask timerTask;
-    // 0 : Ringing(초기값), 1: 통화중, 2: 통화 종료
+    // 0 : Ringing(초기값), 1: 통화 중
     int callStatus = 0;
 
     int min = 0;
@@ -44,9 +47,6 @@ public class CallActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
 
-        Intent passedIntent = getIntent();
-        processIntent(passedIntent);
-
         iv_person_call = findViewById(R.id.iv_person_call);
         tv_name_call = findViewById(R.id.tv_name_call);
         tv_phone_call = findViewById(R.id.tv_phone_call);
@@ -55,14 +55,19 @@ public class CallActivity extends AppCompatActivity {
         v_interval_icons_call = findViewById(R.id.v_interval_icons_call);
         ic_accept_call = findViewById(R.id.ic_accept_call);
 
+        Intent passedIntent = getIntent();
+        processIntent(passedIntent);
+
         callListener = ShareInterface.callListener;
         if(callListener == null){
             finishAndRemoveTask();
         }
+        callListener.shareContext(this);
 
         iv_dissmiss_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                callStatus = 1;
                 changeLayout();
             }
         });
@@ -77,40 +82,71 @@ public class CallActivity extends AppCompatActivity {
 
     private void processIntent(Intent intent){
         if(intent != null){
+            int endedCall = intent.getIntExtra("stateToken", 0);
+            if(endedCall != 0){
+                callStatus = 1;
+                changeLayout();
+                return;
+            }
+
             String phone = intent.getStringExtra("phone");
-            Log.d(TAG, "getPhoneNo : " + phone);
+            tv_phone_call.setText(phone);
+            getCallerName(phone);
         }
     }
 
+    //다른 작업에 방해되지 않도록 동기 처리
+    private void getCallerName(String phone){
+        String caller = null;
+
+        Handler handler = new Handler();
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Querys querys = new Querys(CallActivity.this);
+                        PersonDTO person = querys.selectByPhoneNo(phone);
+                        if (person == null){
+                            tv_name_call.setText("미등록 번호");
+                        } else {
+                            tv_name_call.setText(person.getName());
+                        }
+                    }
+                });
+            }
+        });
+        thread.start();
+    }
+
+    //call activity가 task 최상위일 때, 한번 더 startActivity를
+    //BroadCast가 호출했을 때 호출됨.
     @Override
     protected void onNewIntent(Intent intent) {
-        processIntent(intent);
-
         super.onNewIntent(intent);
+        processIntent(intent);
     }
 
     public void changeLayout(){
         //통화 수락
-        if (callStatus == 0){
+        if (callStatus == 0) {
             callStatus = 1;
             callTimer();
             ic_accept_call.setVisibility(View.GONE);
             v_interval_icons_call.setVisibility(View.GONE);
             return;
-            //통화 종료
-        } else if (callStatus == 1){
-            callStatus = 2;
-            callListener.dismissCall();
-            callTimer.cancel();
-            tv_phone_call.setText("통화종료");
-            layoutDelayFinish();
-            //통화 거부
-        } else {
-            callStatus = 2;
-            callListener.dismissCall();
-            tv_phone_call.setText("통화종료");
-            layoutDelayFinish();
         }
+
+        //통화 종료
+        callStatus = 0;
+        callListener.dismissCall();
+        if (callTimer != null){
+            callTimer.cancel();
+        }
+        tv_time_call.setText("통화종료");
+        layoutDelayFinish();
+
     }
     private void layoutDelayFinish(){
         Handler handler = new Handler();
