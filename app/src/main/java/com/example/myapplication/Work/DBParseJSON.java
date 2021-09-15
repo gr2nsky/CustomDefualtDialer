@@ -1,5 +1,6 @@
 package com.example.myapplication.Work;
 
+import android.app.Person;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
@@ -16,6 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * @author Yoon
@@ -130,9 +133,34 @@ public class DBParseJSON {
         }
     }
 
-    private void syncDatabase(ArrayList<PersonDTO> loadPerson){
+    private void syncSQLiteDataFromServer(ArrayList<PersonDTO> loadPerson){
+        selecltAll();
         int indexCousor = 0;
         Querys querys = new Querys(con);
+        //addall의 이유 : 탐색을 하면서 sqlite에 지속적으로 추가하므로,
+        //얕은복사를 하게 되면 비교하게되는 sqlitePerson의 배열이 계속 변하여 원하는 결과가 도출되지 않는다.
+        ArrayList<PersonDTO> serverPersons = loadPerson;
+        ArrayList<PersonDTO> sqlitePersons = new ArrayList<>();
+        sqlitePersons.addAll(Persons.getPersons().getList());
+        /*
+            정렬기준은 Comparable을 상속받아 구현하였으므로, PersonDTO class에서 확인 가능
+         */
+        Collections.sort(serverPersons);
+        Collections.sort(sqlitePersons);
+
+        for(PersonDTO serverPerson : serverPersons){
+            for(int i = indexCousor; i < sqlitePersons.size(); i++){
+                if (serverPerson.getPhoneNumber().equals(sqlitePersons.get(i).getPhoneNumber())){
+                    if(serverPerson.getName().equals(sqlitePersons.get(i).getName())){
+                        querys.modifyPerson(sqlitePersons.get(i), serverPerson);
+                        indexCousor = i;
+                        break;
+                    }
+                }
+            }
+            //sqlite 추가 쿼리
+            querys.insertPerson(serverPerson);
+        }
     }
 
     private boolean selecltAll(){
@@ -206,7 +234,7 @@ public class DBParseJSON {
         }catch (Exception e){
             e.printStackTrace();
         }
-ud
+
         return personDTOs;
     }
 

@@ -178,6 +178,40 @@ public class Querys {
         return false;
     }
 
+    public boolean modifyPerson(PersonDTO sqlitePerson, PersonDTO serverPerson){
+        try {
+            db = sqLite.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("pName", serverPerson.getName());
+            values.put("pPhoneNumber", serverPerson.getPhoneNumber());
+            values.put("pImagePath", serverPerson.getImagePath());
+            values.put("pEmail", serverPerson.getEmail());
+            values.put("pResidence", serverPerson.getResidence());
+            values.put("pMemo", serverPerson.getMemo());
+            values.put("pIsChanged", "0");
+
+            String selection = "pNo = ?";
+            String[] selectionArgs =  { Integer.toString(sqlitePerson.getNo()) };
+
+            int count = db.update(
+                    "person",
+                    values,
+                    selection,
+                    selectionArgs
+            );
+            if (count < 1){
+                return false;
+            }
+
+            Log.d(TAG, "modifyPerson done");
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public boolean isChangedRemove(String[] pNos){
         try {
 
