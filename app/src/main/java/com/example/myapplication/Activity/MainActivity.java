@@ -65,7 +65,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         //editText선택시 키보드는 호출하지 않게끔 설정
         et_dial.setShowSoftInputOnFocus(false);
+        et_dial.clearFocus();
     }
+
 
     //Dial 추가가 너무 기므로 별도 분리하였음
     private void dialBtnAdd(){

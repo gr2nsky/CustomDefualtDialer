@@ -100,6 +100,8 @@ public class PersonDetailActivity extends AppCompatActivity{
                 }
             }
         });
+
+
     } //onCreate
 
     private void setPersonInfo(){

@@ -37,7 +37,7 @@ public class LoadPersonTask extends AsyncTask<Void, Void, String> {
         super.onPreExecute();
         dialog = new ProgressDialog(con);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("연락처를 백업하고 있습니다...");
+        dialog.setMessage("연락처를 받고 있습니다...");
         dialog.show();
     }
 

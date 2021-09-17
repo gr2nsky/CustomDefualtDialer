@@ -181,9 +181,9 @@ public class DBParseJSON {
     // common
     private JSONObject makeJson(ArrayList<PersonDTO> personDTOs){
         JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
 
         try{
-            JSONArray jsonArray = new JSONArray();
             for (PersonDTO person : personDTOs){
                 JSONObject pJson = new JSONObject();
                 pJson.put("pNo", person.getNo());
@@ -203,6 +203,7 @@ public class DBParseJSON {
             jsonObject = null;
         }
 
+        Log.d(TAG, "DBParseJSONArray\n" + jsonArray.toString());
         Log.d(TAG, "DBParseJSON\n" + jsonObject.toString());
         return jsonObject;
     }

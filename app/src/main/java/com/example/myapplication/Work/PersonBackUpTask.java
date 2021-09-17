@@ -3,6 +3,7 @@ package com.example.myapplication.Work;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.myapplication.Common.CommonVar;
 import com.example.myapplication.Common.Persons;
@@ -24,13 +25,13 @@ import java.net.URL;
  */
 public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
 
-    String TAG = "DeletePerson";
+    String TAG = "PersonBackUpTask";
 
     Context con;
     ProgressDialog dialog;
     Querys querys;
     String jsonObject;
-    String filePath;
+    String filePath = "postGet";
 
     public PersonBackUpTask(Context con, JSONObject jsonObject) {
         this.con = con;
@@ -64,14 +65,14 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
             httpURLConnection.setRequestMethod("POST");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
 
-            outputStreamWriter.write(jsonObject);
+            outputStreamWriter.write("person=" + jsonObject);
             outputStreamWriter.flush();
 
             if (httpURLConnection.getResponseCode() == httpURLConnection.HTTP_OK){
 
                 inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8");
                 bufferedReader = new BufferedReader(inputStreamReader);
-
+                Log.d(TAG, "bufferedReader : " + bufferedReader);
                 while (true) {
                     String str = bufferedReader.readLine();
                     if (str == null) break;

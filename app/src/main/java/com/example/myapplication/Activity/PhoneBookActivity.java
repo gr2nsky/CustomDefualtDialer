@@ -158,23 +158,22 @@ public class PhoneBookActivity extends AppCompatActivity{
 
     private void uploadAndDownload(){
         DBParseJSON dbParseJSON = new DBParseJSON(PhoneBookActivity.this);
-
         AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PhoneBookActivity.this)
-                .setTitle("알림")
-                .setMessage("원하시는 작업을 선택하세요.")
-                .setPositiveButton("백업", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dbParseJSON.uploadProcess();
-                    }
-                })
-                .setNegativeButton("내려받기", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-        AlertDialog backBtnDialog = backBtnDialogBuilder.create();
-        backBtnDialog.show();
+            .setTitle("알림")
+            .setMessage("원하시는 작업을 선택하세요")
+            .setPositiveButton("백업", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                    dbParseJSON.uploadProcess();
+                }
+            })
+            .setNegativeButton("업로드", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.cancel();
+                }
+            });
+        backBtnDialogBuilder.show();
     }
 }
