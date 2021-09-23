@@ -43,12 +43,12 @@ public class DBParseJSON {
         4. http communication이 정상적으로 수행되었다면,
            2의 배열의 pIsChange값을 0으로 바꾸도록 sqlite 질의
      */
-    public void uploadProcess(){
+    public boolean uploadProcess(){
         boolean result = false;
         ArrayList<PersonDTO> changedPerson = new ArrayList<>();
 
         if (!getAllData()){
-            return;
+            return false;
         }
 
         for (PersonDTO person : Persons.getPersons().getList()) {
@@ -60,7 +60,7 @@ public class DBParseJSON {
         JSONObject jsonObject = makeJson(changedPerson);
         if (jsonObject == null){
             errorDialog("경고", "JSON parsing에 실패하였습니다.");
-            return;
+            return false;
         }
 
         PersonBackUpTask personBackUpTask = new PersonBackUpTask(con, jsonObject);
@@ -72,7 +72,7 @@ public class DBParseJSON {
 
         if (!result){
             errorDialog("경고", "네트워크 통신에 실패하였습니다.");
-            return;
+            return false;
         }
 
         ArrayList<String> pNoArrayList = new ArrayList<>();
@@ -82,6 +82,8 @@ public class DBParseJSON {
         String[] pNos = pNoArrayList.toArray(new String[pNoArrayList.size()]);
         Querys querys = new Querys(con);
         querys.isChangedRemove(pNos);
+
+        return true;
     }
 
     private boolean getAllData(){
@@ -108,34 +110,34 @@ public class DBParseJSON {
         2. 해당 String 타입을 json 형식으로 parsing해 배열에 저장한다.
         3. SQLite에 질의하며 데이터를 넣는다
             [Server DB는 보존이 아닌 저장의 개념]
-
-
      */
 
-    public void downloadProcess(){
+    public boolean downloadProcess(){
         LoadPersonTask loadPersonTask = new LoadPersonTask(con);
-        String jsonStr = "";
+        ArrayList<PersonDTO> loadedPerson = null;
         try{
-            jsonStr = loadPersonTask.execute().get();
+            loadedPerson = loadPersonTask.execute().get();
         }catch (Exception e){
             e.printStackTrace();
+            return false;
         }
 
-        if(jsonStr.equals("")){
+        if(loadedPerson == null){
             errorDialog("경고", "올바른 데이터 형식을 받지 못했습니다.");
-            return;
+            return false;
         }
-
-        ArrayList<PersonDTO> loadPerson = makeJson(jsonStr);
-        if(loadPerson.size() < 1){
+        if(loadedPerson.size() < 1){
             errorDialog("경고", "불러올 데이터가 존재하지 않습니다.");
-            return;
+            return false;
         }
+        syncSQLiteDataFromServer(loadedPerson);
+        return true;
     }
 
     private void syncSQLiteDataFromServer(ArrayList<PersonDTO> loadPerson){
         selecltAll();
         int indexCousor = 0;
+        int pasteToken = 0;
         Querys querys = new Querys(con);
         //addall의 이유 : 탐색을 하면서 sqlite에 지속적으로 추가하므로,
         //얕은복사를 하게 되면 비교하게되는 sqlitePerson의 배열이 계속 변하여 원하는 결과가 도출되지 않는다.
@@ -149,17 +151,25 @@ public class DBParseJSON {
         Collections.sort(sqlitePersons);
 
         for(PersonDTO serverPerson : serverPersons){
-            for(int i = indexCousor; i < sqlitePersons.size(); i++){
-                if (serverPerson.getPhoneNumber().equals(sqlitePersons.get(i).getPhoneNumber())){
-                    if(serverPerson.getName().equals(sqlitePersons.get(i).getName())){
+            int i = indexCousor;
+            for(i = 0; i < sqlitePersons.size(); i++){
+                if (serverPerson.getName().equals(sqlitePersons.get(i).getName())){
+                    if(serverPerson.getPhoneNumber().equals(sqlitePersons.get(i).getPhoneNumber())){
                         querys.modifyPerson(sqlitePersons.get(i), serverPerson);
                         indexCousor = i;
+                        pasteToken = 1;
+                        Log.d(TAG, "덮어씁니다 index = " + i +  " index cousor = " + indexCousor);
+                        Log.d(TAG, serverPerson.pringAll());
                         break;
                     }
                 }
             }
-            //sqlite 추가 쿼리
-            querys.insertPerson(serverPerson);
+            if(pasteToken == 0){
+                querys.insertPerson(serverPerson);
+                Log.d(TAG, "추가합니다. index = " + i);
+                Log.d(TAG, serverPerson.pringAll());
+            }
+            pasteToken = 0;
         }
     }
 
@@ -207,38 +217,6 @@ public class DBParseJSON {
         Log.d(TAG, "DBParseJSON\n" + jsonObject.toString());
         return jsonObject;
     }
-
-    private ArrayList<PersonDTO> makeJson(String jsonStr){
-        ArrayList<PersonDTO> personDTOs = new ArrayList<>();
-
-        try{
-            JSONObject jsonObject = new JSONObject(jsonStr);
-            JSONArray jsonArray = new JSONArray(jsonObject.getString("person"));
-
-            for (int i = 0; i < jsonArray.length(); i++){
-                JSONObject pJson = (JSONObject) jsonArray.get(i);
-
-                int no = Integer.parseInt(pJson.getString("pNo"));
-                String name = pJson.getString("pName");
-                String phone = pJson.getString("pPhoneNumber");
-                String imagePath = pJson.getString("pImagePath");
-                String email = pJson.getString("pEmail");
-                String residence = pJson.getString("pResidence");
-                String memo = pJson.getString("pMemo");
-                int isChanged = 0;
-
-                PersonDTO person = new PersonDTO(no, name, phone, imagePath, email, residence, memo, isChanged);
-                personDTOs.add(person);
-            }
-            jsonObject.put("person", jsonArray);
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return personDTOs;
-    }
-
 
     public void errorDialog(String title, String msg) {
         AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(con)

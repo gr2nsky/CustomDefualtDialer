@@ -78,12 +78,14 @@ public class PhoneBookActivity extends AppCompatActivity{
             }
         });
         selectAllPerson();
-    }
+    } //onCreate
 
     private void setAdapter(){
         if (Persons.getPersons().getList().size() < 1) {
             tv_replace_list_view_phone_book.setVisibility(View.VISIBLE);
             return;
+        } else {
+            tv_replace_list_view_phone_book.setVisibility(View.GONE);
         }
 
         //리사이클러뷰에 리사이클러뷰 어댑터 부착
@@ -131,10 +133,13 @@ public class PhoneBookActivity extends AppCompatActivity{
     protected void onResume() {
         super.onResume();
         if (phoneBookListAdapter == null){
+            selectAllPerson();
+            Persons.getPersons().sort();
             setAdapter();
         }
         if (phoneBookListAdapter != null){
             phoneBookListAdapter.renewalSearchedListBase(Persons.getPersons().getList());
+            Persons.getPersons().sort();
             phoneBookListAdapter.notifyDataSetChanged();
             phoneBookListAdapter.getFilter().filter(search_view_phone_book.getQuery());
         }
@@ -165,13 +170,20 @@ public class PhoneBookActivity extends AppCompatActivity{
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.cancel();
-                    dbParseJSON.uploadProcess();
+                    if(dbParseJSON.uploadProcess()){
+                        selectAllPerson();
+                        setAdapter();
+                    }
                 }
             })
-            .setNegativeButton("업로드", new DialogInterface.OnClickListener() {
+            .setNegativeButton("내려받기", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     dialogInterface.cancel();
+                    if (dbParseJSON.downloadProcess()){
+                        selectAllPerson();
+                        setAdapter();
+                    }
                 }
             });
         backBtnDialogBuilder.show();

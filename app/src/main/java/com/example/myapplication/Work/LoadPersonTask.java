@@ -3,10 +3,13 @@ package com.example.myapplication.Work;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.myapplication.Common.CommonVar;
+import com.example.myapplication.DTO.PersonDTO;
 import com.example.myapplication.InnerDB.Querys;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -15,18 +18,19 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * @author Yoon
  * @created 2021-09-14
  */
-public class LoadPersonTask extends AsyncTask<Void, Void, String> {
+public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> {
 
-    String TAG = "DeletePerson";
+    String TAG = "LoadPersonTask";
 
     Context con;
     ProgressDialog dialog;
-    String filePath;
+    String filePath = "download";
 
     public LoadPersonTask(Context con) {
         this.con = con;
@@ -42,12 +46,12 @@ public class LoadPersonTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... voids) {
+    protected ArrayList<PersonDTO> doInBackground(Void... voids) {
         StringBuffer stringBuffer = new StringBuffer();
         InputStream inputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader bufferedReader = null;
-        String result = "";
+        ArrayList<PersonDTO> result = new ArrayList<>();
 
 
         try{
@@ -71,12 +75,14 @@ public class LoadPersonTask extends AsyncTask<Void, Void, String> {
                     if (str == null) break;
                     stringBuffer.append(str + "\n");
                 }
-                result = stringBuffer.toString().trim();
+                Log.d(TAG, "parserSelect_str: " + stringBuffer);
+                result.clear();
+                result.addAll(parserSelect(stringBuffer));
 
             }
         } catch (Exception e){
             e.printStackTrace();
-            result = "false";
+            result = null;
         } finally {
             try {
                 if (bufferedReader != null) bufferedReader.close();
@@ -91,8 +97,35 @@ public class LoadPersonTask extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected void onPostExecute(String result) {
+    protected void onPostExecute(ArrayList<PersonDTO> result) {
         dialog.dismiss();
         super.onPostExecute(result);
+    }
+
+    private ArrayList<PersonDTO> parserSelect(StringBuffer str){
+        ArrayList<PersonDTO> persons = new ArrayList<>();
+
+        try {
+            JSONArray jsonArray = new JSONArray(str.toString());
+
+            for(int i=0; i < jsonArray.length(); i++ ){
+                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                String name = jsonObject.getString("pName");
+                String phoneNumber = jsonObject.getString("pPhoneNumber");
+                String imagePath = jsonObject.getString("pImagePath");
+                String email = jsonObject.getString("pEmail");
+                String residence = jsonObject.getString("pResidence");
+                String memo = jsonObject.getString("pMemo");
+
+                PersonDTO person = new PersonDTO(name, phoneNumber, imagePath, email, residence, memo);
+                persons.add(person);
+                Log.d(TAG, person.pringAll());
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return persons;
     }
 }

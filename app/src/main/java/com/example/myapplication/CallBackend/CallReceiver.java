@@ -44,7 +44,7 @@ public class CallReceiver extends BroadcastReceiver implements CallListener {
                 } else {
                     phoneState = state;
                 }
-                //통화 대기중
+                //통화 대기중 (벨소리 울림)
                 if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
                     String phoneNo = extras.getString(TelephonyManager.EXTRA_INCOMING_NUMBER);
                     sendToActivity(context, phoneNo, 0);
@@ -79,7 +79,12 @@ public class CallReceiver extends BroadcastReceiver implements CallListener {
         Intent.FLAG_ACTIVITY_SINGLE_TOP : 호출된 액티비티가 최상위에 존재한다면, 재사용
         Intent.FLAG_ACTIVITY_CLEAR_TOP : 호출된 액티비티가 스택에 존재한다면, 위의 액티비티를 모두 삭제해 최상위로 만든다.
          */
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_INCLUDE_STOPPED_PACKAGES | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(
+                Intent.FLAG_ACTIVITY_REORDER_TO_FRONT |
+                        Intent.FLAG_INCLUDE_STOPPED_PACKAGES |
+                        Intent.FLAG_ACTIVITY_NEW_TASK |
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("phone", phone);
         intent.putExtra("stateToken", stateToken);
         con.startActivity(intent);

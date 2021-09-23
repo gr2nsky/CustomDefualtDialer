@@ -1,5 +1,7 @@
 package com.example.myapplication.DTO;
 
+import android.util.Log;
+
 /**
  * @author Yoon
  * @created 2021-09-08
@@ -22,14 +24,14 @@ public class PersonDTO implements Comparable<PersonDTO>{
     }
 
     //내려받기용
-    public PersonDTO(String name, String phoneNumber, String imagePath, String email, String residence, String memo, int isChanged) {
+    public PersonDTO(String name, String phoneNumber, String imagePath, String email, String residence, String memo) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.imagePath = imagePath;
         this.email = email;
         this.residence = residence;
         this.memo = memo;
-        this.isChanged = isChanged;
+        this.isChanged = 0;
     }
 
     //수정용
@@ -130,50 +132,77 @@ public class PersonDTO implements Comparable<PersonDTO>{
 
     /*
         정렬 규칙
-        1. 전화번호 기준 정렬
-            a. String type으로 변환해 같은지 비교
-                i : 이름기준 정렬 - 오름차순
-            b. 길이 비교
-            c. 0번째 index부터 ASCII로 치환해 한글자씩 비교
+        1. 이름의 첫 글자 비교
+        2. 이름의 길이 비교
+        3. 이름의 각 문자마다 비교
+        4. 전화번호 첫 글자 비교
+        5. 전화번호 길이 비교
+        4. 전화번호 각 문자마다 비교
      */
     @Override
     public int compareTo(PersonDTO other) {
+        String thisName = this.getName();
+        String otherName = other.getName();
         String thisPhone = this.phoneNumber;
         String otherPhone = other.getPhoneNumber();
 
-        if(isEqualsStr(thisPhone, otherPhone)){
-            //이름으로 정렬해 결과 반환, 둘다 같으면 0 반환
-       }
-        int sbl = sortBylen(thisPhone, otherPhone);
-        if( sbl != 0){
-            return sbl;
+        int result = cimpareCondition(thisName, otherName);
+        if(result != 0){
+            return result;
         }
+        return cimpareCondition(thisPhone, otherPhone);
 
-        return sortByASCII(thisPhone, otherPhone);
+
+//        if(thisName.length() < otherName.length()){
+//            return -1;
+//        }  else if(thisName.length() > otherName.length()) {
+//            return 1;
+//        } else{
+//            int comp = thisName.compareTo(otherName);
+//            if( comp != 0){
+//                return comp;
+//            }else {
+//                int cp = compPhone(thisPhone, otherPhone);
+//                if(cp != 0){
+//                    return cp;
+//                }
+//            }
+//            return 1;
+//        }
     }
 
-    public int sortBylen(String thisPhone, String otherPhone){
-        if(otherPhone.length() < thisPhone.length()){
-            return 1;
-        } else if (otherPhone.length() > thisPhone.length()){
+    private int cimpareCondition(String thisStr, String otherStr){
+        if(thisStr.charAt(0) < otherStr.charAt(0)){
             return -1;
-        }
-        return 0;
-    }
-
-    public Boolean isEqualsStr(String thisPhone, String otherPhone){
-        if(thisPhone.equals(otherPhone)){
-            return true;
-        }
-        return false;
-    }
-
-    public int sortByASCII(String thisPhone, String otherPhone){
-        for(int i = 0; i < thisPhone.length(); i++){
-            if(otherPhone.charAt(i) < thisPhone.charAt(i)){
-                return 1;
-            } else if (thisPhone.charAt(i) < otherPhone.charAt(i)){
+        } else if (thisStr.charAt(0) > otherStr.charAt(0)){
+            return 1;
+        } else {
+            //condition 2: text length
+            if(thisStr.length() < otherStr.length()){
                 return -1;
+            }else if(thisStr.length() > otherStr.length()) {
+                return 1;
+            } else{
+                //condition 3: text singly code
+                int comp = thisStr.compareTo(otherStr);
+                if( comp != 0){
+                    return comp;
+                }else {
+                    return  0;
+                }
+            }
+        }
+    }
+
+    private int compPhone(String thisPhone, String otherPhone){
+
+        for(int i = 0; i < thisPhone.length(); i++){
+            int ap = thisPhone.charAt(i);
+            int bp = otherPhone.charAt(i);
+            if ( ap < bp){
+                return -1;
+            }else if (ap > bp){
+                return 1;
             }
         }
         return 0;

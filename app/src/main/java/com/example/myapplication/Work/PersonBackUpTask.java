@@ -31,7 +31,7 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
     ProgressDialog dialog;
     Querys querys;
     String jsonObject;
-    String filePath = "postGet";
+    String filePath = "backup";
 
     public PersonBackUpTask(Context con, JSONObject jsonObject) {
         this.con = con;
@@ -95,7 +95,7 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
         }
 
 
-        if (result.equals("true")){
+            if (result.equals("true")){
             return true;
         }
         return false;
