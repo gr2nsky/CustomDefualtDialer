@@ -3,15 +3,21 @@ package com.example.myapplication.Activity;
  * @author Yoon
  * @created 2021-09-07
  */
+import static android.telecom.TelecomManager.ACTION_CHANGE_DEFAULT_DIALER;
+import static android.telecom.TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.role.RoleManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.telecom.TelecomManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -65,7 +71,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         //editText선택시 키보드는 호출하지 않게끔 설정
         et_dial.setShowSoftInputOnFocus(false);
+        et_dial.clearFocus();
     }
+
 
     //Dial 추가가 너무 기므로 별도 분리하였음
     private void dialBtnAdd(){
@@ -185,6 +193,23 @@ public class MainActivity extends AppCompatActivity {
             }
             , 5);
         }
+    }
+    //Request this app be defualt dial app
+    private void offerReplacingDefaultDialer() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            RoleManager roleManager = (RoleManager) getSystemService(Context.ROLE_SERVICE);
+            Intent intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER);
+            startActivityForResult(intent, 120);
+        } else {
+            TelecomManager telecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
+
+            if (!getPackageName().equals(telecomManager.getDefaultDialerPackage())) {
+                Intent intent = new Intent(ACTION_CHANGE_DEFAULT_DIALER)
+                        .putExtra(EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, getPackageName());
+                startActivity(intent);
+            }
+        }
+
     }
 }
 

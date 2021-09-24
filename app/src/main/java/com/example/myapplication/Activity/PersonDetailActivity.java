@@ -100,19 +100,32 @@ public class PersonDetailActivity extends AppCompatActivity{
                 }
             }
         });
+
+
     } //onCreate
 
     private void setPersonInfo(){
         et_name_person_detail.setText(person.getName());
         et_phone_person_detail.setText(person.getPhoneNumber());
         et_email_person_detail.setText(person.getEmail());
+        if(person.getEmail() != null && person.getEmail().equals("null")){
+            et_email_person_detail.setText("");
+        }
+
         et_residence_person_detail.setText(person.getResidence());
-        if (person.getMemo() != null && !person.getMemo().equals("")){
+        if(person.getResidence() != null && person.getResidence().equals("null")){
+            et_residence_person_detail.setText("");
+        }
+
+
+        if (person.getMemo() != null && !person.getMemo().equals("null") && !person.getMemo().equals("")){
             String memo = person.getMemo();
             memo = memo.replace("__[EnterSpace]__", "\n");
             person.setMemo(memo);
+            et_memo_person_detail.setText(person.getMemo());
+        } else {
+            et_memo_person_detail.setText("");
         }
-        et_memo_person_detail.setText(person.getMemo());
     }
 
 
@@ -188,6 +201,7 @@ public class PersonDetailActivity extends AppCompatActivity{
                 persons.modify(oldPerson, modifiedPerson);
                 person = modifiedPerson;
                 simpleDialog("알림", "연락처 수정에 성공하였습니다.", 0);
+                setPersonInfo();
             } else {
                 simpleDialog("경고", "연락처 수정에 실패하였습니다.", 0);
             }

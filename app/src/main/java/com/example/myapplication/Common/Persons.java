@@ -5,6 +5,8 @@ import androidx.annotation.NonNull;
 import com.example.myapplication.DTO.PersonDTO;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Yoon
@@ -50,5 +52,11 @@ public class Persons {
 
     public ArrayList<PersonDTO> getList(){
         return list;
+    }
+
+    public void sort(){
+        if(persons != null){
+            Collections.sort(list);
+        }
     }
 }
