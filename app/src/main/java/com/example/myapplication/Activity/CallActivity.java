@@ -150,7 +150,7 @@ public class CallActivity extends AppCompatActivity {
         }
 
         //[통화시간] 통화가 활성화되면 보여주고 타이머를 가동한다.
-        //통화가 종료된다면, 타이머를 멈춘다
+        //통화가 종료되는 즉시, 타이머를 멈춘다
         if (state == Call.STATE_ACTIVE) {
             tv_time_call.setVisibility(View.VISIBLE);
             callTimer();

@@ -5,6 +5,7 @@ package com.example.myapplication.Activity;
  */
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,6 +61,7 @@ public class PhoneBookActivity extends AppCompatActivity{
         search_view_phone_book = findViewById(R.id.search_view_phone_book);
         iv_add_phone_book = findViewById(R.id.iv_add_phone_book);
         list_view_phone_book = findViewById(R.id.list_view_phone_book);
+        list_view_phone_book.addItemDecoration(new DividerItemDecoration(PhoneBookActivity.this, 1));
         tv_replace_list_view_phone_book = findViewById(R.id.tv_replace_list_view_phone_book);
         search_view_phone_book.setImeOptions(EditorInfo.IME_ACTION_DONE);
         search_view_phone_book.setOnQueryTextListener(searchViewTextListener);
