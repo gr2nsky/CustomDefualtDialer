@@ -1,37 +1,29 @@
 package com.example.myapplication.CallBackend;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.IBinder;
 import android.telecom.Call;
 import android.telecom.InCallService;
+import android.util.Log;
 
 import com.example.myapplication.Activity.CallActivity;
 
+/**
+ * @author Yoon
+ * @created 2021-09-24
+ */
 public class CallService extends InCallService {
+    String TAG = "CallService";
 
     @Override
     public void onCallAdded(Call call) {
         super.onCallAdded(call);
-        call.registerCallback(callCallback);
-        Intent intent = new Intent(getApplicationContext(), CallActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        //CallManager.updateCall(call);
+        Log.v(TAG, "call : " + call);
+        new CallManager().setCall(call);
+        CallActivity.start(this, call);
     }
 
     @Override
     public void onCallRemoved(Call call) {
         super.onCallRemoved(call);
-        call.unregisterCallback(callCallback);
-        //CallManager.updateCall(null);
+        new CallManager().setCall(call);
     }
-
-    private Call.Callback callCallback = new Call.Callback() {
-        @Override
-        public void onStateChanged(Call call, int state) {
-            //CallManager.updateCall(call);
-        }
-    };
-
 }

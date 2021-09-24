@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         //권한 요청
         requestCallPermission();
+        offerReplaceDefaultDialer();
 
         et_dial = findViewById(R.id.et_dial);
         btn_move_phone_book = findViewById(R.id.btn_move_phone_book);
@@ -180,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
         backBtnDialog.show();
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////
+    //                     request permissiobn & defualt dial app                    //
+    ///////////////////////////////////////////////////////////////////////////////////
     //통화, 내부저장소 읽고쓰기 권한 요청. 23이상의 버전일경우만 필요함
     private void requestCallPermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -194,22 +198,23 @@ public class MainActivity extends AppCompatActivity {
             , 5);
         }
     }
-    //Request this app be defualt dial app
-    private void offerReplacingDefaultDialer() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-            RoleManager roleManager = (RoleManager) getSystemService(Context.ROLE_SERVICE);
-            Intent intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER);
-            startActivityForResult(intent, 120);
-        } else {
-            TelecomManager telecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
 
-            if (!getPackageName().equals(telecomManager.getDefaultDialerPackage())) {
-                Intent intent = new Intent(ACTION_CHANGE_DEFAULT_DIALER)
-                        .putExtra(EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, getPackageName());
+    private void offerReplaceDefaultDialer(){
+
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
+            TelecomManager telecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
+            if(!getPackageName().equals(telecomManager.getDefaultDialerPackage())){
+                Intent intent = new Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER)
+                        .putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, getPackageName());
                 startActivity(intent);
             }
         }
-
+        else {
+            RoleManager roleManager = (RoleManager) getSystemService(Context.ROLE_SERVICE);
+            Intent intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER);
+            //resultLauncher.launch(intent);
+            startActivityForResult(intent, 1);
+        }
     }
 }
 

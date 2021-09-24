@@ -30,11 +30,19 @@
         android:text="전화번호"
         android:textSize="40dp"/>
     <TextView
-        android:id="@+id/tv_time_call"
+        android:id="@+id/tv_state_call"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="통화 대기중"
+        android:textSize="20dp"/>
+    <TextView
+        android:id="@+id/tv_time_call"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="00:00"
+        android:visibility="invisible"
         android:textSize="20dp"/>
     <View
         android:layout_weight="1"
