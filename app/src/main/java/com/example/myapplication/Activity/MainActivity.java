@@ -3,8 +3,6 @@ package com.example.myapplication.Activity;
  * @author Yoon
  * @created 2021-09-07
  */
-import static android.telecom.TelecomManager.ACTION_CHANGE_DEFAULT_DIALER;
-import static android.telecom.TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
