@@ -68,6 +68,14 @@ public class PersonInputActivity extends AppCompatActivity {
         String residence = et_residence_person_input.getText().toString();
         String memo = et_memo_person_input.getText().toString();
 
+        if(name.trim().equals("") || name == null){
+            personInputError("경고", "이름을 입력해 주세요.");
+            return;
+        }else if(phone.trim().equals("") || phone == null){
+            personInputError("경고", "전화번호를 입력해 주세요.");
+            return;
+        }
+
         PersonDTO person = new PersonDTO(name, phone);
         //[수정요함]
         if (imagePath != null){
@@ -92,7 +100,7 @@ public class PersonInputActivity extends AppCompatActivity {
 
                 finishAndRemoveTask();
             } else {
-                failToInsertPerson();
+                personInputError("경고", "등록에 실패했습니다.");
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -124,10 +132,10 @@ public class PersonInputActivity extends AppCompatActivity {
         AlertDialog backBtnDialog = backBtnDialogBuilder.create();
         backBtnDialog.show();
     }
-    private void failToInsertPerson(){
+    private void personInputError(String title, String msg){
         AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PersonInputActivity.this)
-                .setTitle("경고")
-                .setMessage("등록에 실패했습니다.")
+                .setTitle(title)
+                .setMessage(msg)
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

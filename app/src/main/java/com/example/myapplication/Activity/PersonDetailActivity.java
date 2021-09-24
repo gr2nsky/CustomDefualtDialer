@@ -176,6 +176,14 @@ public class PersonDetailActivity extends AppCompatActivity{
         String residence = et_residence_person_detail.getText().toString();
         String memo = et_memo_person_detail.getText().toString();
 
+        if(name.trim().equals("") || name == null){
+            simpleDialog("경고", "이름을 입력해 주세요.", 0);
+            return;
+        }else if(phone.trim().equals("") || phone == null){
+            simpleDialog("경고", "전화번호를 입력해 주세요.", 0);
+            return;
+        }
+
         PersonDTO modifiedPerson = new PersonDTO(person.getNo(), name, phone);
         //[수정요함]
         if (imagePath != null){

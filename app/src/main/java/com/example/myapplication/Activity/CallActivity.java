@@ -18,6 +18,7 @@ import com.example.myapplication.CallBackend.Constants;
 import com.example.myapplication.DTO.PersonDTO;
 import com.example.myapplication.InnerDB.Querys;
 import com.example.myapplication.R;
+import com.example.myapplication.databinding.ActivityCallBinding;
 
 import java.util.Objects;
 import java.util.Timer;
@@ -60,6 +61,8 @@ public class CallActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
+//        ActivityCallBinding binding = ActivityCallBinding.inflate(getLayoutInflater());
+//        setContentView(binding.getRoot());
 
         callManager = new CallManager();
         disposable = new CompositeDisposable();
