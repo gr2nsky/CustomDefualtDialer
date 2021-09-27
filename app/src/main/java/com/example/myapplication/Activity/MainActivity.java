@@ -6,12 +6,14 @@ package com.example.myapplication.Activity;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.role.RoleManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -188,9 +190,9 @@ public class MainActivity extends AppCompatActivity {
                     Manifest.permission.READ_PHONE_STATE,
                     Manifest.permission.ANSWER_PHONE_CALLS,
                     Manifest.permission.READ_CALL_LOG,
-
+                    Manifest.permission.READ_CONTACTS,
             }
-            , 5);
+            , 6);
         }
     }
 

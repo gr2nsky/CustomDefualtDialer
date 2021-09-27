@@ -1,59 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.drawerlayout.widget.DrawerLayout
+    android:id="@+id/drawer"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Activity.PhoneBookActivity"
-    android:orientation="vertical"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <ImageView
-            android:id="@+id/iv_backendTask_phone_boook"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="center"
-            android:src="@drawable/icon_cloud"/>
-        <SearchView
-            android:id="@+id/search_view_phone_book"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:iconifiedByDefault="false"
-            android:queryBackground="@drawable/background_rounded_conner_light_gary"/>
-        <ImageView
-            android:id="@+id/iv_add_phone_book"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/icon_person_add"
-            android:layout_gravity="center" />
-    </LinearLayout>
-    <FrameLayout
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list_view_phone_book"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/iv_backendTask_phone_boook"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:src="@drawable/icon_cloud"/>
+            <SearchView
+                android:id="@+id/search_view_phone_book"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@drawable/background_rounded_conner_light_gary"/>
+            <ImageView
+                android:id="@+id/iv_add_phone_book"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/icon_person_add"
+                android:layout_gravity="center" />
+        </LinearLayout>
+        <FrameLayout
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp">
 
-        <TextView
-            android:id="@+id/tv_replace_list_view_phone_book"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_view_phone_book"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/tv_replace_list_view_phone_book"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone"
+                android:text="저장된 연락처가 없습니다."
+                android:textSize="20dp"/>
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="250dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:background="#ffffff"
+            android:padding="5dp">
+            <TextView
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textSize="48sp"
+                android:text="MENU"
+                android:background="#FFFFFF"
+                android:textColor="#000000"
+                android:id="@+id/drawer_content"/>
+            <Button
+                android:id="@+id/drawer_cancel_phone_book"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="X"
+                android:textColor="#000000"
+                android:backgroundTint="#cccccc"/>
+        </LinearLayout>
+        <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:visibility="gone"
-            android:text="저장된 연락처가 없습니다."
-            android:textSize="20dp"/>
-    </FrameLayout>
-</LinearLayout>
+            android:background="#cccccc"
+            android:id="@+id/drawer_menulist" />
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

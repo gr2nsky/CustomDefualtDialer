@@ -50,6 +50,7 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... voids) {
+        Log.d(TAG, "doInBackground stated");
         StringBuffer stringBuffer = new StringBuffer();
         InputStream inputStream = null;
         InputStreamReader inputStreamReader = null;
@@ -68,8 +69,8 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
             outputStreamWriter.write("person=" + jsonObject);
             outputStreamWriter.flush();
 
+            Log.d(TAG, "http response code : " + httpURLConnection.getResponseCode());
             if (httpURLConnection.getResponseCode() == httpURLConnection.HTTP_OK){
-
                 inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(),"UTF-8");
                 bufferedReader = new BufferedReader(inputStreamReader);
                 Log.d(TAG, "bufferedReader : " + bufferedReader);
@@ -83,6 +84,7 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
             }
         } catch (Exception e){
             e.printStackTrace();
+            Log.d(TAG, e.toString());
             result = "false";
         } finally {
             try {
@@ -95,7 +97,7 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
         }
 
 
-            if (result.equals("true")){
+            if (result != null && result.equals("true")){
             return true;
         }
         return false;

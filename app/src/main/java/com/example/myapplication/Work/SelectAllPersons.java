@@ -67,4 +67,5 @@ public class SelectAllPersons extends AsyncTask<Void, Void, Boolean> {
         dialog.dismiss();
         super.onPostExecute(aBoolean);
     }
+
 }

@@ -5,6 +5,8 @@ package com.example.myapplication.Activity;
  */
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,18 +16,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.example.myapplication.Adapter.NavigationDrawerListener;
 import com.example.myapplication.Adapter.PhoneBookListAdapter;
 import com.example.myapplication.Adapter.PhoneBookListItemTouchHelper;
 import com.example.myapplication.Common.Persons;
-import com.example.myapplication.InnerDB.SQLite;
+import com.example.myapplication.Adapter.NavigationDrawerAdapter;
 import com.example.myapplication.R;
-import com.example.myapplication.Work.DBParseJSON;
 import com.example.myapplication.Work.SelectAllPersons;
 
 /*
@@ -38,7 +43,7 @@ import com.example.myapplication.Work.SelectAllPersons;
     4. phoneBookListAdapter를 list_view_phone_book에 부착한다.
  */
 
-public class PhoneBookActivity extends AppCompatActivity{
+public class PhoneBookActivity extends AppCompatActivity implements NavigationDrawerListener {
 
     String TAG = "PhoneBookActivity";
 
@@ -51,6 +56,10 @@ public class PhoneBookActivity extends AppCompatActivity{
     RecyclerView.LayoutManager layoutManager;
     PhoneBookListAdapter phoneBookListAdapter;
     ItemTouchHelper itemTouchHelper;
+
+    DrawerLayout drawerLayout;
+    ListView drawerList = null;
+    Button drawer_cancel_phone_book;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,20 +75,23 @@ public class PhoneBookActivity extends AppCompatActivity{
         search_view_phone_book.setImeOptions(EditorInfo.IME_ACTION_DONE);
         search_view_phone_book.setOnQueryTextListener(searchViewTextListener);
 
-        iv_add_phone_book.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PhoneBookActivity.this, PersonInputActivity.class);
-                startActivity(intent);
-            }
+        iv_add_phone_book.setOnClickListener(view -> {
+            Intent intent = new Intent(PhoneBookActivity.this, PersonInputActivity.class);
+            startActivity(intent);
         });
-        iv_backendTask_phone_boook.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                uploadAndDownload();
-            }
+        iv_backendTask_phone_boook.setOnClickListener(view -> {
+            Log.d(TAG, "clicked cloud");
+            drawerLayout.openDrawer(Gravity.LEFT);
         });
         selectAllPerson();
+
+        //drawer nav
+        drawerLayout = findViewById(R.id.drawer);
+        drawer_cancel_phone_book = findViewById(R.id.drawer_cancel_phone_book);
+        drawer_cancel_phone_book.setOnClickListener(view -> {
+            drawerLayout.closeDrawer(Gravity.LEFT);
+        });
+        setNavDrawer();
     } //onCreate
 
     private void setAdapter(){
@@ -99,6 +111,12 @@ public class PhoneBookActivity extends AppCompatActivity{
         itemTouchHelper = new ItemTouchHelper(new PhoneBookListItemTouchHelper(phoneBookListAdapter));
         itemTouchHelper.attachToRecyclerView(list_view_phone_book);
         tv_replace_list_view_phone_book.setVisibility(View.GONE);
+    }
+
+    private void setNavDrawer(){
+        NavigationDrawerAdapter nd = new NavigationDrawerAdapter(PhoneBookActivity.this, this);
+        drawerList = findViewById(R.id.drawer_menulist);
+        drawerList.setAdapter(nd);
 
     }
 
@@ -163,31 +181,11 @@ public class PhoneBookActivity extends AppCompatActivity{
         }
     };
 
-    private void uploadAndDownload(){
-        DBParseJSON dbParseJSON = new DBParseJSON(PhoneBookActivity.this);
-        AlertDialog.Builder backBtnDialogBuilder = new AlertDialog.Builder(PhoneBookActivity.this)
-            .setTitle("알림")
-            .setMessage("원하시는 작업을 선택하세요")
-            .setPositiveButton("백업", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                    if(dbParseJSON.uploadProcess()){
-                        selectAllPerson();
-                        setAdapter();
-                    }
-                }
-            })
-            .setNegativeButton("내려받기", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                    if (dbParseJSON.downloadProcess()){
-                        selectAllPerson();
-                        setAdapter();
-                    }
-                }
-            });
-        backBtnDialogBuilder.show();
+
+    @Override
+    public void taskEnd(boolean result, String title, String msg) {
+        selectAllPerson();
+        setAdapter();
+        Persons.getPersons().sort();
     }
 }
