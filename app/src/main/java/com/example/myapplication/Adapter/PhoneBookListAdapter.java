@@ -136,29 +136,43 @@ public class PhoneBookListAdapter extends RecyclerView.Adapter<PhoneBookListAdap
         return itemFilter;
     }
 
+    /*
+        검색 조건
+        1. 2글자 이하는 이름으로 검색
+        2. 3들자 이상은 이메일, 전화번호, 이름으로 검색
+     */
     private class ItemFilter extends Filter{
-
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
             String filterString = charSequence.toString();
             FilterResults results = new FilterResults();
-
             Log.d(TAG, "charSequence : " + charSequence);
 
+            //검색조건이 추가됬으므로, 검색이 필요없을 경우를 미리 처리
             ArrayList<PersonDTO> filteredList = new ArrayList<>();
+            if (filterString == null || filterString.trim().length() < 1){
+                results.values = persons;
+                results.count = persons.size();
 
-            if (filterString != null && filterString.trim().length() != 0){
+                return results;
+            } else if(filterString.trim().length() <= 2){
                 for (PersonDTO dto : persons){
-                    if(dto.getPhoneNumber().contains(filterString)){
+                    if(dto.getName().contains(filterString)){
                         filteredList.add(dto);
-                        Log.d(TAG, "filtered name : " + dto.getName());
                     }
                 }
                 results.values = filteredList;
                 results.count = filteredList.size();
             } else {
-                results.values = persons;
-                results.count = persons.size();
+                for (PersonDTO dto : persons){
+                    if(dto.getName().contains(filterString) ||
+                            dto.getPhoneNumber().contains(filterString) ||
+                            dto.getEmail().contains(filterString)){
+                        filteredList.add(dto);
+                    }
+                }
+                results.values = filteredList;
+                results.count = filteredList.size();
             }
 
             return results;
