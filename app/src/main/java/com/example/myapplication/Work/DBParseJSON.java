@@ -135,7 +135,9 @@ public class DBParseJSON {
     }
 
     private void syncSQLiteDataFromServer(ArrayList<PersonDTO> loadPerson){
-        selecltAll();
+        if (!selecltAll()){
+            return;
+        }
         int indexCousor = 0;
         int pasteToken = 0;
         Querys querys = new Querys(con);
