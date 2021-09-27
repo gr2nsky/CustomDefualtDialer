@@ -56,12 +56,9 @@ public class MainActivity extends AppCompatActivity {
         dialBtnAdd();
         btn_dial_call.setOnClickListener(callBtnClickListener);
         btn_dial_remove.setOnClickListener(removeBtnClickListener);
-        btn_move_phone_book.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), PhoneBookActivity.class);
-                startActivity(intent);
-            }
+        btn_move_phone_book.setOnClickListener(view -> {
+            Intent intent = new Intent(getApplicationContext(), PhoneBookActivity.class);
+            startActivity(intent);
         });
     } //onCreate
 
