@@ -6,14 +6,12 @@ package com.example.myapplication.Activity;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.role.RoleManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -197,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void offerReplaceDefaultDialer(){
-
         if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q){
             TelecomManager telecomManager = (TelecomManager) getSystemService(TELECOM_SERVICE);
             if(!getPackageName().equals(telecomManager.getDefaultDialerPackage())){

@@ -23,7 +23,7 @@
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_gravity="center"
-                android:src="@drawable/icon_cloud"/>
+                android:src="@drawable/icon_menu"/>
             <SearchView
                 android:id="@+id/search_view_phone_book"
                 android:layout_weight="1"
