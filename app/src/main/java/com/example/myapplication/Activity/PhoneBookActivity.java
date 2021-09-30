@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import com.example.myapplication.Adapter.NavigationDrawerListener;
 import com.example.myapplication.Adapter.PhoneBookListAdapter;
 import com.example.myapplication.Adapter.PhoneBookListItemTouchHelper;
+import com.example.myapplication.Common.CDialog;
 import com.example.myapplication.Common.Persons;
 import com.example.myapplication.Adapter.NavigationDrawerAdapter;
 import com.example.myapplication.R;
@@ -43,7 +45,7 @@ import com.example.myapplication.Work.SelectAllPersons;
     4. phoneBookListAdapter를 list_view_phone_book에 부착한다.
  */
 
-public class PhoneBookActivity extends AppCompatActivity implements NavigationDrawerListener {
+public class PhoneBookActivity extends AppCompatActivity {
 
     String TAG = "PhoneBookActivity";
 
@@ -80,7 +82,6 @@ public class PhoneBookActivity extends AppCompatActivity implements NavigationDr
             startActivity(intent);
         });
         iv_backendTask_phone_boook.setOnClickListener(view -> {
-            Log.d(TAG, "clicked cloud");
             drawerLayout.openDrawer(Gravity.LEFT);
         });
         selectAllPerson();
@@ -114,7 +115,17 @@ public class PhoneBookActivity extends AppCompatActivity implements NavigationDr
     }
 
     private void setNavDrawer(){
-        NavigationDrawerAdapter nd = new NavigationDrawerAdapter(PhoneBookActivity.this, this);
+        FragmentManager fm = getSupportFragmentManager();
+        NavigationDrawerAdapter nd = new NavigationDrawerAdapter(PhoneBookActivity.this, fm, new NavigationDrawerListener() {
+            @Override
+            public void taskEnd(boolean result, String title, String msg) {
+                selectAllPerson();
+                setAdapter();
+                Persons.getPersons().sort();
+                CDialog cDialog = new CDialog(PhoneBookActivity.this);
+                cDialog.oneBtnJsutDisplayDialog(title, msg);
+            }
+        });
         drawerList = findViewById(R.id.drawer_menulist);
         drawerList.setAdapter(nd);
 
@@ -182,10 +193,4 @@ public class PhoneBookActivity extends AppCompatActivity implements NavigationDr
     };
 
 
-    @Override
-    public void taskEnd(boolean result, String title, String msg) {
-        selectAllPerson();
-        setAdapter();
-        Persons.getPersons().sort();
-    }
 }

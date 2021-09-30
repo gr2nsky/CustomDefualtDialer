@@ -1,15 +1,14 @@
-package com.example.myapplication.Work;
+package com.example.myapplication.Auth;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.JsonReader;
 import android.util.Log;
 
 import com.example.myapplication.Common.CommonVar;
 import com.example.myapplication.DTO.PersonDTO;
-import com.example.myapplication.InnerDB.Querys;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -22,18 +21,30 @@ import java.util.ArrayList;
 
 /**
  * @author Yoon
- * @created 2021-09-14
+ * @created 2021-09-28
+ *     Server에 단말기의 uuid와 전화번호를 넘겨서 결과값을 받는다.
+ *     1. 새 유저 -> "new"
+ *     2. 이미 등록된 유저
+ *         2.1 해당 단말의 uuid와 서버에 등록된 uuid가 같음 -> "pass"
+ *         2.2 해당 단말의 uuid와 서버에 등록된 uuid가 다름 -> "key값 전송"
+ *     3. Error
+ *         3.1 네트워크 오류 -> "networkError"
  */
-public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> {
+public class CheckValidUserDevice extends AsyncTask<Void, Void, String> {
 
-    String TAG = "LoadPersonTask";
+    String TAG = "CheckValidUserDevice";
 
     Context con;
+    String uuid;
+    String phoneNumber;
     ProgressDialog dialog;
-    String filePath = "download";
 
-    public LoadPersonTask(Context con) {
+    String filePath = "CheckValidUserDevice";
+
+    public CheckValidUserDevice(Context con, String uuid, String phoneNumber) {
         this.con = con;
+        this.uuid = uuid;
+        this.phoneNumber = phoneNumber;
     }
 
     @Override
@@ -41,18 +52,18 @@ public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> 
         super.onPreExecute();
         dialog = new ProgressDialog(con);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("연락처를 받고 있습니다...");
+        dialog.setMessage("사용자를 확인하고 있습니다");
         dialog.show();
     }
 
     @Override
-    protected ArrayList<PersonDTO> doInBackground(Void... voids) {
+    protected String doInBackground(Void... voids) {
         StringBuffer stringBuffer = new StringBuffer();
         InputStream inputStream = null;
         InputStreamReader inputStreamReader = null;
         BufferedReader bufferedReader = null;
-        ArrayList<PersonDTO> result = new ArrayList<>();
 
+        String result = "";
 
         try{
             URL url = new URL(CommonVar.rootPath + filePath);
@@ -62,7 +73,12 @@ public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> 
             httpURLConnection.setRequestMethod("POST");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
 
-            outputStreamWriter.write("");
+            JSONObject json = new JSONObject();
+            json.put("uuid", uuid);
+            json.put("phone", phoneNumber);
+            Log.d(TAG, json.toString());
+
+            outputStreamWriter.write("device_data="+json.toString());
             outputStreamWriter.flush();
 
             if (httpURLConnection.getResponseCode() == httpURLConnection.HTTP_OK){
@@ -75,14 +91,15 @@ public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> 
                     if (str == null) break;
                     stringBuffer.append(str + "\n");
                 }
-                Log.d(TAG, ""+stringBuffer);
-                result.clear();
-                result.addAll(parserSelect(stringBuffer));
+                Log.d(TAG, "result : " + stringBuffer);
+                result.toString().trim();
 
+            } else {
+                return "networkError";
             }
         } catch (Exception e){
             e.printStackTrace();
-            result = null;
+            result = "";
         } finally {
             try {
                 if (bufferedReader != null) bufferedReader.close();
@@ -97,35 +114,9 @@ public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> 
     }
 
     @Override
-    protected void onPostExecute(ArrayList<PersonDTO> result) {
-        dialog.dismiss();
+    protected void onPostExecute(String result) {
         super.onPostExecute(result);
+        dialog.dismiss();
     }
 
-    private ArrayList<PersonDTO> parserSelect(StringBuffer str){
-        ArrayList<PersonDTO> persons = new ArrayList<>();
-
-        try {
-            JSONArray jsonArray = new JSONArray(str.toString());
-
-            for(int i=0; i < jsonArray.length(); i++ ){
-                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
-                String name = jsonObject.getString("pName");
-                String phoneNumber = jsonObject.getString("pPhoneNumber");
-                String imagePath = jsonObject.getString("pImagePath");
-                String email = jsonObject.getString("pEmail");
-                String residence = jsonObject.getString("pResidence");
-                String memo = jsonObject.getString("pMemo");
-
-                PersonDTO person = new PersonDTO(name, phoneNumber, imagePath, email, residence, memo);
-                persons.add(person);
-                Log.d(TAG, person.pringAll());
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return persons;
-    }
 }

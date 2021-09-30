@@ -12,8 +12,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.myapplication.Activity.PhoneBookActivity;
+import com.example.myapplication.Auth.UserAuthProcess;
 import com.example.myapplication.Common.CDialog;
 import com.example.myapplication.R;
 import com.example.myapplication.Work.DBParseJSON;
@@ -27,10 +29,12 @@ public class NavigationDrawerAdapter extends BaseAdapter {
 
     final String[] itmes = {"연락처 백업", "연락처 내려받기", "기기 연락처 동기화"};
     Context con;
+    FragmentManager fm;
     NavigationDrawerListener naviListener;
 
-    public NavigationDrawerAdapter(Context con, NavigationDrawerListener naviListener) {
+    public NavigationDrawerAdapter(Context con, FragmentManager fm, NavigationDrawerListener naviListener) {
         this.con = con;
+        this.fm = fm;
         this.naviListener = naviListener;
     }
 
@@ -93,6 +97,7 @@ public class NavigationDrawerAdapter extends BaseAdapter {
                 } else {
                     naviListener.taskEnd(result, "경고", "연락처 업로드에 실패했습니다.");
                 }
+                break;
             case 1:
                 result = dbParseJSON.downloadProcess();
                 if(result){
@@ -100,6 +105,7 @@ public class NavigationDrawerAdapter extends BaseAdapter {
                 } else {
                     naviListener.taskEnd(result, "경고", "연락처 로드에 실패했습니다.");
                 }
+                break;
             case 2:
                 if (ContextCompat.checkSelfPermission(
                         con, Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
@@ -114,8 +120,14 @@ public class NavigationDrawerAdapter extends BaseAdapter {
                     }
                 }
                 naviListener.taskEnd(result, "알림", "연락처를 성공적으로 업로드했습니다.");
+                break;
             default:
                 return;
         }
     }
+
+//    private void userCheck(){
+//        UserAuthProcess userAuthProcess = new UserAuthProcess(con, fm);
+//        userAuthProcess.isEnableUserCheckProcess();
+//    }
 }

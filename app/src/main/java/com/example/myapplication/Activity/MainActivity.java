@@ -6,6 +6,7 @@ package com.example.myapplication.Activity;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.app.role.RoleManager;
@@ -22,9 +23,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.myapplication.Auth.UserAuthProcess;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), PhoneBookActivity.class);
             startActivity(intent);
         });
+
+        userCheck();
+
     } //onCreate
 
     @Override
@@ -209,6 +215,10 @@ public class MainActivity extends AppCompatActivity {
             //resultLauncher.launch(intent);
             startActivityForResult(intent, 1);
         }
+    }
+    private void userCheck(){
+        UserAuthProcess userAuthProcess = new UserAuthProcess(MainActivity.this, getSupportFragmentManager());
+        userAuthProcess.isEnableUserCheckProcess();
     }
 }
 
