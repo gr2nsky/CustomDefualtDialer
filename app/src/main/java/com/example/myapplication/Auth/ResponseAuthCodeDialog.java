@@ -1,7 +1,11 @@
 package com.example.myapplication.Auth;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +27,8 @@ import java.util.TimerTask;
  */
 public class ResponseAuthCodeDialog extends DialogFragment {
 
+    Context con;
+
     private DialogResponseAuthCodeBinding binding;
     int requestCodeClickedCount = 0;
 
@@ -42,11 +48,15 @@ public class ResponseAuthCodeDialog extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DialogResponseAuthCodeBinding.inflate(inflater, container, false);
         return binding.getRoot();
+//        binding = DialogResponseAuthCodeBinding.inflate(LayoutInflater.from(con));
+//        return AlertDialog.Builder()
     }
 
     @Override
@@ -71,13 +81,12 @@ public class ResponseAuthCodeDialog extends DialogFragment {
                     return;
                 case "false":
                     binding.tvErrMsg.setVisibility(View.VISIBLE);
-                    binding.tvErrMsg.setVisibility(View.VISIBLE);
                     return;
                 case "networkError":
                     Toast.makeText(getContext(), "네트워크 에러", Toast.LENGTH_SHORT).show();
                     return;
                 default:
-                    //에러 처리
+                    Toast.makeText(getContext(), "알 수 없는 에러", Toast.LENGTH_SHORT).show();
                     return;
             }
 
@@ -106,6 +115,7 @@ public class ResponseAuthCodeDialog extends DialogFragment {
                 case "networkError":
                     break;
                 default:
+                    binding.tvErrMsg.setVisibility(View.INVISIBLE);
                     timerRun();
                     setAuthCode(getResponse);
                     break;
@@ -129,6 +139,7 @@ public class ResponseAuthCodeDialog extends DialogFragment {
         isAtuhInputTimeVaild = true;
         min = 3;
         second = 0;
+        binding.tvAuthCodeTimer.setVisibility(View.VISIBLE);
         binding.tvAuthCodeTimer.setText("03:00");
 
         if(timer != null){
@@ -139,7 +150,15 @@ public class ResponseAuthCodeDialog extends DialogFragment {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                setTime();
+                if(con != null){
+                    Activity ac = (Activity) con;
+                    ((Activity) con).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            setTime();
+                        }
+                    });
+                }
             }
         };
         timer.schedule(timerTask, 0, 1000);
@@ -158,6 +177,7 @@ public class ResponseAuthCodeDialog extends DialogFragment {
             timerStop();
         }
         String secondStr = second < 10 ? "0"+second : Integer.toString(second);
+
         binding.tvAuthCodeTimer.setText("0"+min+":"+secondStr);
     }
 
@@ -165,5 +185,12 @@ public class ResponseAuthCodeDialog extends DialogFragment {
         if(timer != null){
             timer.cancel();
         }
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        this.con = con;
     }
 }

@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.example.myapplication.Common.CommonVar;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,7 +50,11 @@ public class RequestAuthCodeTask extends AsyncTask<Void, Void, String> {
             httpURLConnection.setRequestMethod("POST");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
 
-            outputStreamWriter.write("deviceInfo={phoneNumber:" + phoneNumber + "}");
+            JSONObject json = new JSONObject();
+            json.put("phone", phoneNumber);
+            Log.d(TAG, json.toString());
+
+            outputStreamWriter.write("device_data="+json.toString());
             outputStreamWriter.flush();
 
             if (httpURLConnection.getResponseCode() == httpURLConnection.HTTP_OK){
@@ -61,8 +67,8 @@ public class RequestAuthCodeTask extends AsyncTask<Void, Void, String> {
                     if (str == null) break;
                     stringBuffer.append(str + "\n");
                 }
+                result = stringBuffer.toString().trim();
                 Log.d(TAG, "result : " + stringBuffer);
-                result.toString().trim();
 
             } else {
                 return "networkError";

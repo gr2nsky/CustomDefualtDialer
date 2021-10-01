@@ -33,7 +33,6 @@ public class UserAuthProcess {
     String TAG = "UserAuthProcess";
 
     Context con;
-    FragmentManager fm;
 
     SharedPreferences prefs;
     CDialog cDialog;
@@ -41,11 +40,8 @@ public class UserAuthProcess {
     String uuid = "";
     String phoneNumber = "";
 
-    private boolean isVailedUserDevice = false;
-
-    public UserAuthProcess(Context con, FragmentManager fm) {
+    public UserAuthProcess(Context con) {
         this.con = con;
-        this.fm = fm;
         prefs = con.getSharedPreferences("AUTH", con.MODE_PRIVATE);
         cDialog = new CDialog(con);
     }
@@ -72,15 +68,15 @@ public class UserAuthProcess {
         //권한이 없어 전화번호를 얻어오지 못 함
         if(phoneNumber.equals("")){
             cDialog.oneBtnJsutDisplayDialog("경고", "권환을 허용해 주세요.");
-            return;
+            return "";
         }
         
         CheckValidUserDevice checkValidUserDevice  = new CheckValidUserDevice(con, uuid, phoneNumber);
         try{
             requestResult = checkValidUserDevice.execute().get();
-            Log.d(TAG, "requestResult : " + requestResult);
         }catch (Exception e){
             e.printStackTrace();
+            requestResult = "networkError";
         }
 
         /*
@@ -90,27 +86,8 @@ public class UserAuthProcess {
             new_false : 신규 회원가입 실패
             networkError : 네트워크 에러
         */
-        switch (requestResult){
-            case "true":
-                isVailedUserDevice = true;
-                break;
-            case "need_auth":
-                responseAuthCodePocess();
-                break;
-            case "new_false":
-                cDialog.oneBtnJsutDisplayDialog("경고", "계정 등록 에러");
-                isVailedUserDevice = false;
-                break;
-            case "networkError":
-                cDialog.oneBtnJsutDisplayDialog("경고", "네트워크 Error");
-                isVailedUserDevice = false;
-                break;
-            default:
-                cDialog.oneBtnJsutDisplayDialog("경고", "확인되지 않은 오류입니다.\n다시 실행해주세요.");
-                isVailedUserDevice = false;
-        }
-
-        return isVailedUserDevice;
+        Log.d(TAG, "requestResult : " + requestResult);
+        return requestResult;
     }
 
     //UUID 생성 및 확인
@@ -163,41 +140,31 @@ public class UserAuthProcess {
         4. 취소 키 입력
             - false 반환 및 모든 작업 종료
      */
-    public void responseAuthCodePocess(){
-        ResponseAuthCodeDialog authCodeDialog = new ResponseAuthCodeDialog(new ResponseAuthCodeDialogInterface() {
-            @Override
-            public String onPositiveClick(String inputedAuthCode) {
-                String getResponse = "";
 
-                CheckValidAuthCodeTask checkValidAuthCodeTask = new CheckValidAuthCodeTask(con, phoneNumber, inputedAuthCode);
-                try{
-                    getResponse = checkValidAuthCodeTask.execute().get();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
-                if (getResponse.equals("true")){
-                    isVailedUserDevice = true;
-                }
-                return getResponse;
-            }
-            @Override
-            public String onRequestNewAuthClick(ResponseAuthCodeDialog responseAuthCodeDialog) {
-                String getResponse = "";
-                RequestAuthCodeTask requestAuthCodeTask = new RequestAuthCodeTask(con, phoneNumber);
-                try {
-                    getResponse = requestAuthCodeTask.execute().get();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-                return getResponse;
-            }
-        });
-        authCodeDialog.show(fm, "authDialog");
+    //역할 : 인증코드 등록하라고 하던가, 받은 인증코드를 비교하던가.[
+    public String requestNewAuthCode(){
+        String getResponse = "";
+        RequestAuthCodeTask requestAuthCodeTask = new RequestAuthCodeTask(con, phoneNumber);
+        try {
+            getResponse = requestAuthCodeTask.execute().get();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return getResponse;
+    }
+    public String compareAuthCode(String inputedAuthCode){
+        String getResponse = "";
+
+        CheckValidAuthCodeTask checkValidAuthCodeTask = new CheckValidAuthCodeTask(con, phoneNumber, uuid, inputedAuthCode);
+        try{
+            getResponse = checkValidAuthCodeTask.execute().get();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        Log.d(TAG, "requestNewAuthCode getResponse: " + getResponse);
+        return getResponse;
     }
 
-    public boolean getIsAtuhInputTimeVaild(){
-        return isVailedUserDevice;
-    }
 }
 
 

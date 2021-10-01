@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.example.myapplication.Common.CommonVar;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,12 +25,14 @@ public class CheckValidAuthCodeTask extends AsyncTask<Void, Void, String> {
 
     Context con;
     String phoneNumber;
+    String uuid;
     String authCode;
     String filePath = "checkValidAuthCodeTask";
 
-    public CheckValidAuthCodeTask(Context con, String phoneNumber, String authCode) {
+    public CheckValidAuthCodeTask(Context con, String phoneNumber, String uuid, String authCode) {
         this.con = con;
         this.phoneNumber = phoneNumber;
+        this.uuid = uuid;
         this.authCode = authCode;
     }
 
@@ -49,7 +53,13 @@ public class CheckValidAuthCodeTask extends AsyncTask<Void, Void, String> {
             httpURLConnection.setRequestMethod("POST");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
 
-            outputStreamWriter.write("deviceInfo={phoneNumber:" + phoneNumber + ", authCode:" + authCode + "}");
+            JSONObject json = new JSONObject();
+            json.put("phone", phoneNumber);
+            json.put("uuid", uuid);
+            json.put("authCode", authCode);
+            Log.d(TAG, "device_data="+json.toString());
+
+            outputStreamWriter.write("device_data="+json.toString());
             outputStreamWriter.flush();
 
             if (httpURLConnection.getResponseCode() == httpURLConnection.HTTP_OK){
@@ -63,7 +73,7 @@ public class CheckValidAuthCodeTask extends AsyncTask<Void, Void, String> {
                     stringBuffer.append(str + "\n");
                 }
                 Log.d(TAG, "result : " + stringBuffer);
-                result.toString().trim();
+                result = stringBuffer.toString().trim();
 
             } else {
                 return "networkError";

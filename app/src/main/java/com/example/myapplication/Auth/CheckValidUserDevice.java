@@ -88,11 +88,13 @@ public class CheckValidUserDevice extends AsyncTask<Void, Void, String> {
 
                 while (true) {
                     String str = bufferedReader.readLine();
-                    if (str == null) break;
+                    if (str == null) {
+                        break;
+                    }
                     stringBuffer.append(str + "\n");
                 }
                 Log.d(TAG, "result : " + stringBuffer);
-                result.toString().trim();
+                result = stringBuffer.toString().trim();
 
             } else {
                 return "networkError";
@@ -110,6 +112,7 @@ public class CheckValidUserDevice extends AsyncTask<Void, Void, String> {
             }
 
         }
+
         return result;
     }
 
