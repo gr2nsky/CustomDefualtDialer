@@ -6,7 +6,7 @@ import android.util.Log;
  * @author Yoon
  * @created 2021-09-24
  */
-public class Constants {
+public class Contract {
     public static String asString(int data) {
         String value;
         switch (data) {

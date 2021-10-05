@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         userAuthProcess = new UserAuthProcess(MainActivity.this);
-        userCheck();
     } //onCreate
 
     @Override

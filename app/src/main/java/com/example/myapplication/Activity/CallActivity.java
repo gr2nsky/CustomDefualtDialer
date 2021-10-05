@@ -14,11 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.CallBackend.CallManager;
-import com.example.myapplication.CallBackend.Constants;
+import com.example.myapplication.CallBackend.Contract;
 import com.example.myapplication.DTO.PersonDTO;
 import com.example.myapplication.InnerDB.Querys;
 import com.example.myapplication.R;
-import com.example.myapplication.databinding.ActivityCallBinding;
 
 import java.util.Objects;
 import java.util.Timer;
@@ -137,7 +136,7 @@ public class CallActivity extends AppCompatActivity {
     private Consumer<? super Integer> updateUi(Integer state) {
         //이름 전화번호 상태를 각각 입력
         getCallerName(phone);
-        tv_state_call.setText(Constants.asString(state));
+        tv_state_call.setText(Contract.asString(state));
         tv_phone_call.setText(phone);
 
         //[통화버튼] 수신 대기중인 상태면 보여주고, 아니라면 보여주지 않는다.
