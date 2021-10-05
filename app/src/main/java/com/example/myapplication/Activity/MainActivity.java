@@ -6,6 +6,7 @@ package com.example.myapplication.Activity;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.Manifest;
 import android.app.role.RoleManager;
@@ -21,10 +22,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.myapplication.Auth.ResponseAuthCodeDialog;
+import com.example.myapplication.Auth.ResponseAuthCodeDialogInterface;
+import com.example.myapplication.Auth.UserAuthProcess;
+import com.example.myapplication.Common.CDialog;
+import com.example.myapplication.Common.CommonVar;
 import com.example.myapplication.R;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
     ImageView btn_dial_remove;
     //ArrayList of dial numbers
     ArrayList<Integer> dialBtns;
+
+    //0: false, 1: true
+    UserAuthProcess userAuthProcess;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +68,18 @@ public class MainActivity extends AppCompatActivity {
         btn_dial_call.setOnClickListener(callBtnClickListener);
         btn_dial_remove.setOnClickListener(removeBtnClickListener);
         btn_move_phone_book.setOnClickListener(view -> {
+            if(!CommonVar.validUserToken){
+                Toast.makeText(MainActivity.this, "인증되지 않은 사용자입니다.", Toast.LENGTH_SHORT).show();
+                userCheck();
+                return;
+            }
             Intent intent = new Intent(getApplicationContext(), PhoneBookActivity.class);
             startActivity(intent);
         });
+
+
+        userAuthProcess = new UserAuthProcess(MainActivity.this);
+        userCheck();
     } //onCreate
 
     @Override
@@ -209,6 +229,63 @@ public class MainActivity extends AppCompatActivity {
             //resultLauncher.launch(intent);
             startActivityForResult(intent, 1);
         }
+    }
+
+    ////////////////////////////////////////////////////////
+    //                 임시 위치임                          //
+    ////////////////////////////////////////////////////////
+    //drawer 기능 실행 전에 거쳐갈 것임.
+    private void userCheck(){
+        if(CommonVar.validUserToken == true){
+            return;
+        }
+
+        String userVaildCheckResult = userAuthProcess.isEnableUserCheckProcess();
+
+        CDialog cDialog;
+        cDialog = new CDialog(MainActivity.this);
+
+        switch (userVaildCheckResult){
+            case "true":
+                CommonVar.validUserToken = true;
+                break;
+            case "need_auth":
+                authDialog();
+                break;
+            case "new_false":
+                cDialog.oneBtnJsutDisplayDialog("경고", "계정 등록 에러");
+                break;
+            case "networkError":
+                cDialog.oneBtnJsutDisplayDialog("경고", "네트워크 Error");
+                break;
+            default:
+                cDialog.oneBtnJsutDisplayDialog("경고", "확인되지 않은 오류입니다.\n다시 실행해주세요.");
+                break;
+        }
+    }
+
+    private void authDialog(){
+        ResponseAuthCodeDialog authCodeDialog = new ResponseAuthCodeDialog(
+                new ResponseAuthCodeDialogInterface() {
+            @Override
+            public String onPositiveClick(String inputedAuthCode) {
+                String result = userAuthProcess.compareAuthCode(inputedAuthCode);
+
+                if (result.equals("true")){
+                    CommonVar.validUserToken = true;
+                }
+                Log.d(TAG,"CommonVar.validUserToken : " + CommonVar.validUserToken);
+                return result;
+            }
+            @Override
+            public String onRequestNewAuthClick(ResponseAuthCodeDialog responseAuthCodeDialog) {
+                String result = userAuthProcess.requestNewAuthCode();
+
+                return result;
+            }
+        });
+        authCodeDialog.setCancelable(false);
+        authCodeDialog.show(getSupportFragmentManager(), "authDialog");
     }
 }
 
