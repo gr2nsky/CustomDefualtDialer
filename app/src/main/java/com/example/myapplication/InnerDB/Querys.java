@@ -11,7 +11,10 @@ import com.example.myapplication.Common.Persons;
 import com.example.myapplication.DTO.PersonDTO;
 
 import java.sql.PreparedStatement;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * @author Yoon
@@ -47,11 +50,12 @@ public class Querys {
                 String residence = coursor.getString(5);
                 String memo = coursor.getString(6);
                 int isChanged = coursor.getInt(7);
+                String timeStampStr = coursor.getString(8);
 
-                PersonDTO person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo, isChanged);
+                PersonDTO person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo, isChanged, timeStampStr);
                 persons.add(person);
 
-                Log.d(TAG, "selectAll wrok : " + no + ", " + name + ", " + phoneNumber + ", " + imagePath);
+                Log.d(TAG, "selectAll wrok : " + no + ", " + name + ", " + phoneNumber + ", " + imagePath + ", " + timeStampStr);
             }
             coursor.close();
             sqLite.close();
@@ -83,14 +87,15 @@ public class Querys {
                 String residence = coursor.getString(5);
                 String memo = coursor.getString(6);
                 int isChanged = coursor.getInt(7);
+                String timeStampStr = coursor.getString(8);
 
-                person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo, isChanged);
+                person = new PersonDTO(no, name, phoneNumber, imagePath, email, residence, memo, isChanged, timeStampStr);
 
-                Log.d(TAG, "selectAll wrok : " + no + ", " + name + ", " + phoneNumber + ", " + imagePath);
+                Log.d(TAG, "selectByPhoneNo wrok : " + no + ", " + name + ", " + phoneNumber + ", " + imagePath + ", " + timeStampStr);
             }
             coursor.close();
             sqLite.close();
-            Log.d(TAG, "selectAll done");
+            Log.d(TAG, "selectByPhoneNo done");
 
             return person;
         }catch (Exception e) {
@@ -99,7 +104,8 @@ public class Querys {
         return null;
     }
 
-    public boolean insertPerson(PersonDTO person){
+    //Date타입 추가 확인요함
+    public boolean insertPersonByUser(PersonDTO person){
         try{
             db = sqLite.getWritableDatabase();
 
@@ -112,12 +118,47 @@ public class Querys {
             values.put("pMemo", person.getMemo());
             values.put("pIsChanged", person.getIsChanged());
 
+            long now = System.currentTimeMillis();
+            Date date = new Date(now);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String getTime = dateFormat.format(date);
+
+            values.put("pUpdateDate", getTime);
+
             long newRowId = db.insert("person", null, values);
             if (newRowId == -1){
                 return false;
             }
 
-            Log.d(TAG, "insertPerson done");
+            Log.d(TAG, "insertPersonByUser done");
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    //Date타입 추가 확인요함
+    public boolean insertPersonByServer(PersonDTO person){
+        try{
+            db = sqLite.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("pName", person.getName());
+            values.put("pPhoneNumber", person.getPhoneNumber());
+            values.put("pImagePath", person.getImagePath());
+            values.put("pEmail", person.getEmail());
+            values.put("pResidence", person.getResidence());
+            values.put("pMemo", person.getMemo());
+            values.put("pIsChanged", person.getIsChanged());
+            values.put("pUpdateDate", person.getUpdateDate());
+
+            long newRowId = db.insert("person", null, values);
+            if (newRowId == -1){
+                return false;
+            }
+
+            Log.d(TAG, "insertPersonByServer done");
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -144,7 +185,8 @@ public class Querys {
         return false;
     }
 
-    public boolean modifyPerson(PersonDTO person){
+    //Date타입 추가 확인요함
+    public boolean modifyPersonByUser(PersonDTO person){
         try {
             db = sqLite.getWritableDatabase();
 
@@ -156,6 +198,13 @@ public class Querys {
             values.put("pResidence", person.getResidence());
             values.put("pMemo", person.getMemo());
             values.put("pIsChanged", "1");
+
+            long now = System.currentTimeMillis();
+            Date date = new Date(now);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String getTime = dateFormat.format(date);
+
+            values.put("pUpdateDate", getTime);
 
             String selection = "pNo = ?";
             String[] selectionArgs =  { Integer.toString(person.getNo()) };
@@ -170,7 +219,7 @@ public class Querys {
                 return false;
             }
 
-            Log.d(TAG, "modifyPerson done");
+            Log.d(TAG, "modifyPersonByUser done");
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -178,7 +227,8 @@ public class Querys {
         return false;
     }
 
-    public boolean modifyPerson(PersonDTO sqlitePerson, PersonDTO serverPerson){
+    //Date타입 추가 확인요함
+    public boolean modifyPersonByServer(PersonDTO sqlitePerson, PersonDTO serverPerson){
         try {
             db = sqLite.getWritableDatabase();
 
@@ -190,6 +240,7 @@ public class Querys {
             values.put("pResidence", serverPerson.getResidence());
             values.put("pMemo", serverPerson.getMemo());
             values.put("pIsChanged", "0");
+            values.put("pUpdateDate", serverPerson.getUpdateDate());
 
             String selection = "pNo = ?";
             String[] selectionArgs =  { Integer.toString(sqlitePerson.getNo()) };
@@ -204,7 +255,7 @@ public class Querys {
                 return false;
             }
 
-            Log.d(TAG, "modifyPerson done");
+            Log.d(TAG, "modifyPersonByServer done");
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -212,7 +263,7 @@ public class Querys {
         return false;
     }
 
-    public boolean isChangedRemove(String[] pNos){
+    public boolean isChangedRemove(){
         try {
 
             db = sqLite.getWritableDatabase();
@@ -220,17 +271,14 @@ public class Querys {
             ContentValues values = new ContentValues();
             values.put("pIsChanged", "0");
 
-            String selection = "pNo = ?";
-            String[] selectionArgs = pNos;
-
             int count = db.update(
                     "person",
                     values,
-                    selection,
-                    selectionArgs
+                    null,
+                    null
             );
 
-            Log.d(TAG, "modifyPerson done");
+            Log.d(TAG, "isChangedRemove done");
             return true;
         }catch (Exception e){
             e.printStackTrace();

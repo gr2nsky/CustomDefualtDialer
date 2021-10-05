@@ -91,7 +91,7 @@ public class PersonInputActivity extends AppCompatActivity {
             memo = memo.replace("\n", "__[EnterSpace]__");
             person.setMemo(memo);
         }
-        InsertPerson insertPerson = new InsertPerson(PersonInputActivity.this, person);
+        InsertPerson insertPerson = new InsertPerson(PersonInputActivity.this, person, "user");
         try{
             boolean result = insertPerson.execute().get();
             if (result){

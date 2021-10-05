@@ -16,9 +16,12 @@ import com.example.myapplication.InnerDB.Querys;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 
 /**
  * @author Yoon
@@ -79,9 +82,8 @@ public class DBParseJSON {
         for(PersonDTO person : changedPerson){
             pNoArrayList.add(Integer.toString(person.getNo()));
         }
-        String[] pNos = pNoArrayList.toArray(new String[pNoArrayList.size()]);
         Querys querys = new Querys(con);
-        querys.isChangedRemove(pNos);
+        querys.isChangedRemove();
 
         return true;
     }
@@ -134,6 +136,7 @@ public class DBParseJSON {
         return true;
     }
 
+    //Date타입 추가 확인요함
     private void syncSQLiteDataFromServer(ArrayList<PersonDTO> loadPerson){
         if (!selecltAll()){
             return;
@@ -157,17 +160,32 @@ public class DBParseJSON {
             for(i = 0; i < sqlitePersons.size(); i++){
                 if (serverPerson.getName().equals(sqlitePersons.get(i).getName())){
                     if(serverPerson.getPhoneNumber().equals(sqlitePersons.get(i).getPhoneNumber())){
-                        querys.modifyPerson(sqlitePersons.get(i), serverPerson);
+                        Log.d(TAG, "server time : " + serverPerson.getUpdateDate());
+                        Log.d(TAG, "client time : " + sqlitePersons.get(i).getUpdateDate());
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                        Date ServerDate = null;
+                        Date SQLiteDate = null;
+                        try {
+                            ServerDate = dateFormat.parse(serverPerson.getUpdateDate());
+                            SQLiteDate = dateFormat.parse(sqlitePersons.get(i).getUpdateDate());
+                        } catch (Exception e){
+                            e.printStackTrace();
+                            Log.d(TAG, "날자형식변환 에러");
+                            return;
+                        }
+                        if (ServerDate.compareTo(SQLiteDate) > 0){
+                            querys.modifyPersonByServer(sqlitePersons.get(i), serverPerson);
+                            Log.d(TAG, "덮어씁니다 index = " + i +  " index cousor = " + indexCousor);
+                            Log.d(TAG, serverPerson.pringAll());
+                        }
                         indexCousor = i;
                         pasteToken = 1;
-                        Log.d(TAG, "덮어씁니다 index = " + i +  " index cousor = " + indexCousor);
-                        Log.d(TAG, serverPerson.pringAll());
                         break;
                     }
                 }
             }
             if(pasteToken == 0){
-                querys.insertPerson(serverPerson);
+                querys.insertPersonByServer(serverPerson);
                 Log.d(TAG, "추가합니다. index = " + i);
                 Log.d(TAG, serverPerson.pringAll());
             }
@@ -205,6 +223,7 @@ public class DBParseJSON {
                 pJson.put("pEmail", person.getEmail());
                 pJson.put("pResidence", person.getResidence());
                 pJson.put("pMemo", person.getMemo());
+                pJson.put("pUpdateDate", person.getUpdateDate());
 
                 jsonArray.put(pJson);
             }

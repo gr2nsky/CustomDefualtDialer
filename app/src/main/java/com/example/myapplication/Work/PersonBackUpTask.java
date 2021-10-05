@@ -30,13 +30,13 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
     Context con;
     ProgressDialog dialog;
     Querys querys;
-    String jsonObject;
+    JSONObject jsonObject;
     String filePath = "backup";
 
     public PersonBackUpTask(Context con, JSONObject jsonObject) {
         this.con = con;
         querys = new Querys(con);
-        this.jsonObject = jsonObject.toString();
+        this.jsonObject = jsonObject;
     }
 
     @Override
@@ -66,7 +66,8 @@ public class PersonBackUpTask extends AsyncTask<Void, Void, Boolean> {
             httpURLConnection.setRequestMethod("POST");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
 
-            outputStreamWriter.write("person=" + jsonObject);
+            jsonObject.put("phone", CommonVar.devicePhoneNumber);
+            outputStreamWriter.write("person=" + jsonObject.toString());
             outputStreamWriter.flush();
 
             Log.d(TAG, "http response code : " + httpURLConnection.getResponseCode());

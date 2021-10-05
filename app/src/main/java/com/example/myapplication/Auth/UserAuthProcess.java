@@ -15,6 +15,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.myapplication.Common.CDialog;
+import com.example.myapplication.Common.CommonVar;
 
 import java.util.UUID;
 
@@ -70,6 +71,7 @@ public class UserAuthProcess {
             cDialog.oneBtnJsutDisplayDialog("경고", "권환을 허용해 주세요.");
             return "";
         }
+        CommonVar.devicePhoneNumber = phoneNumber;
         
         CheckValidUserDevice checkValidUserDevice  = new CheckValidUserDevice(con, uuid, phoneNumber);
         try{
