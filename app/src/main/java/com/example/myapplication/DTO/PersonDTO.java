@@ -2,6 +2,10 @@ package com.example.myapplication.DTO;
 
 import android.util.Log;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Calendar;
+
 /**
  * @author Yoon
  * @created 2021-09-08
@@ -17,6 +21,9 @@ public class PersonDTO implements Comparable<PersonDTO>{
     String memo;
     int isChanged = 1;
 
+    //Date타입 추가 확인요함
+    String updateDate;
+
     //입력용 :  nullable인 항목들은 setter를 사용해 값이 있을때만 넣도록 적용할 예정
     public PersonDTO(String name, String phoneNumber) {
         this.name = name;
@@ -24,7 +31,8 @@ public class PersonDTO implements Comparable<PersonDTO>{
     }
 
     //내려받기용
-    public PersonDTO(String name, String phoneNumber, String imagePath, String email, String residence, String memo) {
+    public PersonDTO(String name, String phoneNumber, String imagePath, String email,
+                     String residence, String memo, String updateDate) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.imagePath = imagePath;
@@ -32,6 +40,7 @@ public class PersonDTO implements Comparable<PersonDTO>{
         this.residence = residence;
         this.memo = memo;
         this.isChanged = 0;
+        this.updateDate = updateDate;
     }
 
     //수정용
@@ -44,7 +53,7 @@ public class PersonDTO implements Comparable<PersonDTO>{
 
     //출력용
     public PersonDTO(int no, String name, String phoneNumber, String imagePath,
-                     String email, String residence, String memo, int isChanged) {
+                     String email, String residence, String memo, int isChanged, String updateDate) {
         this.no = no;
         this.name = name;
         this.imagePath = imagePath;
@@ -53,6 +62,7 @@ public class PersonDTO implements Comparable<PersonDTO>{
         this.residence = residence;
         this.memo = memo;
         this.isChanged = isChanged;
+        this.updateDate = updateDate;
     }
 
     public int getNo() {
@@ -119,6 +129,14 @@ public class PersonDTO implements Comparable<PersonDTO>{
         this.isChanged = isChanged;
     }
 
+    public String getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(String updateDate) {
+        this.updateDate = updateDate;
+    }
+
     public String pringAll(){
         return "\nint no : " + no + "\n" +
                 "String name : " + name + "\n" +
@@ -127,7 +145,8 @@ public class PersonDTO implements Comparable<PersonDTO>{
                 "String email : " + email + "\n" +
                 "String residence : " + residence + "\n" +
                 "String memo : " + memo + "\n" +
-                "int isChanged : " + isChanged;
+                "int isChanged : " + isChanged + "\n" +
+                "String updateDate : " + updateDate;
     }
 
     /*
@@ -193,6 +212,8 @@ public class PersonDTO implements Comparable<PersonDTO>{
             }
         }
     }
+
+
 
     private int compPhone(String thisPhone, String otherPhone){
 

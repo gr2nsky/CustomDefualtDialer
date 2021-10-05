@@ -29,7 +29,8 @@ public class SQLite extends SQLiteOpenHelper {
                             "pEmail VARCHAR(100), " +
                             "pResidence VARCHAR(100), " +
                             "pMemo TEXT, " +
-                            "pIsChanged INTEGER DEFAULT 1" +
+                            "pIsChanged INTEGER DEFAULT 1," +
+                            "pUpdateDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                             ")";
             db.execSQL(query);
         }catch (Exception e){

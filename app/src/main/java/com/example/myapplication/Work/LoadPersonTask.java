@@ -62,7 +62,11 @@ public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> 
             httpURLConnection.setRequestMethod("POST");
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(httpURLConnection.getOutputStream());
 
-            outputStreamWriter.write("");
+            JSONObject json = new JSONObject();
+            json.put("phone", CommonVar.devicePhoneNumber);
+            Log.d(TAG, json.toString());
+
+            outputStreamWriter.write("device_data="+json.toString());
             outputStreamWriter.flush();
 
             if (httpURLConnection.getResponseCode() == httpURLConnection.HTTP_OK){
@@ -101,7 +105,7 @@ public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> 
         dialog.dismiss();
         super.onPostExecute(result);
     }
-
+    //Date타입 추가 확인요함
     private ArrayList<PersonDTO> parserSelect(StringBuffer str){
         ArrayList<PersonDTO> persons = new ArrayList<>();
 
@@ -116,8 +120,9 @@ public class LoadPersonTask extends AsyncTask<Void, Void, ArrayList<PersonDTO>> 
                 String email = jsonObject.getString("pEmail");
                 String residence = jsonObject.getString("pResidence");
                 String memo = jsonObject.getString("pMemo");
+                String updateDate = jsonObject.getString("pUpdateDate");
 
-                PersonDTO person = new PersonDTO(name, phoneNumber, imagePath, email, residence, memo);
+                PersonDTO person = new PersonDTO(name, phoneNumber, imagePath, email, residence, memo, updateDate);
                 persons.add(person);
                 Log.d(TAG, person.pringAll());
             }

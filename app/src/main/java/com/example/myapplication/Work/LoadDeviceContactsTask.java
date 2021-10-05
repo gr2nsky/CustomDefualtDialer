@@ -156,6 +156,7 @@ public class LoadDeviceContactsTask extends AsyncTask<Void, Void, Boolean>{
         return result;
     }
 
+    //Date타입 추가 확인요함
     private boolean syncContacts(ArrayList<PersonDTO> dPersons){
         Querys querys = new Querys(con);
         int pasteToken = 0;
@@ -172,17 +173,14 @@ public class LoadDeviceContactsTask extends AsyncTask<Void, Void, Boolean>{
             for(i = 0; i < sqlitePersons.size(); i++){
                 if (dPerson.getName().equals(sqlitePersons.get(i).getName())){
                     if(dPerson.getPhoneNumber().equals(sqlitePersons.get(i).getPhoneNumber())){
-                        querys.modifyPerson(sqlitePersons.get(i), dPerson);
                         indexCousor = i;
                         pasteToken = 1;
-                        Log.d(TAG, "덮어씁니다 index = " + i +  " index cousor = " + indexCousor);
-                        Log.d(TAG, dPerson.pringAll());
                         break;
                     }
                 }
             }
             if(pasteToken == 0){
-                querys.insertPerson(dPerson);
+                querys.insertPersonByUser(dPerson);
                 Log.d(TAG, "추가합니다. index = " + i);
                 Log.d(TAG, dPerson.pringAll());
             }

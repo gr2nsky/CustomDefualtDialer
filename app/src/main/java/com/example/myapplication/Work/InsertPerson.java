@@ -23,12 +23,14 @@ public class InsertPerson extends AsyncTask<Void, Void, Boolean> {
     Persons persons;
     Querys querys;
     PersonDTO person;
+    String inputer;
 
-    public InsertPerson(Context con, PersonDTO person) {
+    public InsertPerson(Context con, PersonDTO person, String inputer) {
         this.con = con;
         persons = Persons.getPersons();
         querys = new Querys(con);
         this.person = person;
+        this.inputer = inputer;
     }
 
     @Override
@@ -42,9 +44,13 @@ public class InsertPerson extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-
+        boolean result;
         try{
-            boolean result = querys.insertPerson(person);
+            if(inputer.equals("user")){
+                result = querys.insertPersonByUser(person);
+            } else {
+                result = querys.insertPersonByServer(person);
+            }
             if(result){
                 return true;
             }

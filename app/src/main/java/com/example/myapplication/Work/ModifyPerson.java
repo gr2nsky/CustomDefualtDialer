@@ -40,9 +40,10 @@ public class ModifyPerson extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-
+        boolean result;
         try{
-            boolean result = querys.modifyPerson(person);
+            result = querys.modifyPersonByUser(person);
+
             if(result){
                 return true;
             }
