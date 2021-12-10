@@ -3,7 +3,6 @@ package com.example.myapplication.CallBackend;
 import android.telecom.Call;
 import android.telecom.InCallService;
 import android.util.Log;
-
 import com.example.myapplication.Activity.CallActivity;
 
 /**

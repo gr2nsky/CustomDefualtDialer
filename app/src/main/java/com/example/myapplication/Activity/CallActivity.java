@@ -230,7 +230,7 @@ public class CallActivity extends AppCompatActivity {
         disposable.clear();
     }
 
-    public static void start(Context context, Call call) {
+    public static void  start(Context context, Call call) {
         Intent intent = new Intent(context, CallActivity.class)
                 //새로운 태스크를 생성하여 그 태스크안에 엑티비티를 추가.
                 //동일한 affinity 가 있다면 그 task 에 새 액티비티를 포함시킴

@@ -68,7 +68,8 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity> <!-- OS에서 InCallService 콜백을 수신하기 위해 서비스 등록 -->
+        </activity>
+        <!-- OS에서 InCallService 콜백을 수신하기 위해 서비스 등록 -->
         <service
             android:name=".CallBackend.CallService"
             android:exported="true"

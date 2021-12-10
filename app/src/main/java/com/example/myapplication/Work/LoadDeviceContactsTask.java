@@ -34,6 +34,7 @@ import java.util.Collections;
            불러오려는 uri종류가 3가지 (phone, structuredPost, Eall)이므로,
            주소록에서 각 항목의 id를 확인해서 id의 정보로 조회하는 방법을 사용한다.
      */
+
 //    private boolean task2(){
 //        boolean result = false;
 //

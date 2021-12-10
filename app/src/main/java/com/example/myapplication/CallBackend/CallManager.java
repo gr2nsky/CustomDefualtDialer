@@ -49,7 +49,7 @@ public class CallManager {
         call.answer(VideoProfile.STATE_AUDIO_ONLY);
     }
 
-    public void hangup(){
+    public void  hangup(){
         assert call != null;
         call.disconnect();
     }
